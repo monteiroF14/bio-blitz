@@ -24,6 +24,7 @@
   - If the user didn't do the quest simply show something in the UI that demonstrates
 
 - Logic to increase the quest frequency (?)
+- Attach quests to users & deprecate questsDone array in players data
 
 ## Battle Pass
 
