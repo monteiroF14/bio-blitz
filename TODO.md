@@ -2,7 +2,6 @@
 
 ## Backend
 
-- Get the locations from the maps if it's free and add to the db, run the code only once and see if you can put the schools too
 - Make the cloud functions work
 
 ## UI
@@ -14,6 +13,10 @@
 - Every 10 levels generate new theme & add to UI for user to edit
 - Make the code for the player to give feedback
 - Create the mutations to update the player's data in the DB
+
+## Session
+
+- Think of a way to pass player data between components (maybe context, idk)
 
 ## Quests
 

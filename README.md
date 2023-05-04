@@ -1,6 +1,4 @@
-# README
-
-### **WORK IN PROGRESS!**
+# WORK IN PROGRESS!
 
 This a game made for a school project which theme was <ins>Environmental Monitoring</ins>
 
