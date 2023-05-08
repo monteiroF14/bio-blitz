@@ -7,7 +7,7 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "./firebase";
-import { Quest } from "../../utils/quest/generateQuests";
+import { Quest } from "../utils/quest/generateQuests";
 
 export const getAllQuestsByType = async (type: Quest["type"]) => {
   const questsSnapshot = await getDocs(

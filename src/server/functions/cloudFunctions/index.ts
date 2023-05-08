@@ -1,8 +1,8 @@
+import { addQuestToDB } from "./../../db/questUtils";
+import { generateQuests } from "./../../utils/quest/generateQuests";
 import * as functions from "firebase-functions";
-import { generateQuests } from "../../../utils/quest/generateQuests";
-import { addQuestToDB } from "../../db/questUtils";
-import BattlePass from "../../../utils/BattlePass";
 import { addBattlePassToDB } from "../../db/battlePassUtils";
+import { BattlePass } from "../../utils/BattlePass";
 
 //TODO: change cloudFunctions name to src because ye
 //TODO: make sure compiler doesn't compile some random .ts

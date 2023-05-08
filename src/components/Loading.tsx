@@ -1,7 +1,7 @@
 import React from "react";
 
 const Loading = () => (
-  <div className="flex h-screen items-center justify-center">
+  <div className="flex h-80 items-center justify-center">
     <div role="status">
       <svg
         aria-hidden="true"

@@ -28,7 +28,7 @@ const server = z.object({
 });
 
 const client = z.object({
-  // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
+  NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: z.string(),
 });
 
 /**
@@ -43,6 +43,7 @@ const processEnv = {
   NEXTAUTH_URL: process.env.NEXTAUTH_URL,
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+  NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
   FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
   FIREBASE_AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN,
   FIREBASE_DATABASE_URL: process.env.FIREBASE_DATABASE_URL,

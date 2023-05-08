@@ -1,6 +1,7 @@
 import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
+import Head from "next/head";
 
 import { api } from "~/utils/api";
 
@@ -13,6 +14,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
+      <Head>
+        <title>bioBlitz</title>
+        <meta name="description" content="bioBlitz - " />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <Header />
       <Component {...pageProps} />
     </SessionProvider>

@@ -62,18 +62,7 @@ export default class Player {
     this.playerData.title = this.getTitleByLevel();
   }
 
-  addXpBoostBasedOnTitle(XP: number, title: string) {
-    switch (title) {
-      case "Intermediate":
-        return (XP *= 1.2);
-      case "Pro Environmentalist":
-        return (XP *= 1.5);
-      default:
-        return XP;
-    }
-  }
-
-  getTitleByLevel() {
+  private getTitleByLevel() {
     const currentLevel = this.playerData.currentLevel;
     return currentLevel < 10
       ? "Beginner"
@@ -81,15 +70,15 @@ export default class Player {
       ? "Intermediate"
       : "Pro Environmentalist";
   }
+}
 
-  // async increaseXP(XP: number) {
-  //   await Promise.all([
-  //     battlePass.increaseXP(XP, this.battlePassData, this.rewards),
-  //     playerLevelingSystem.increaseXP(
-  //       this.addXpBoostBasedOnTitle(XP, this.playerData.title),
-  //       this.playerData,
-  //       this.rewards
-  //     ),
-  //   ]);
-  // }
+export function addXpBoostBasedOnTitle(title: string, XP: number) {
+  switch (title) {
+    case "Intermediate":
+      return (XP *= 1.2);
+    case "Pro Environmentalist":
+      return (XP *= 1.5);
+    default:
+      return XP;
+  }
 }

@@ -1,27 +1,39 @@
 import { z } from "zod";
-import BattlePass from "../../utils/BattlePass";
 import { db } from "./firebase";
-import { addDoc, collection, onSnapshot } from "firebase/firestore";
+import { addDoc, collection, getDocs } from "firebase/firestore";
 import { MAX_BP_LEVEL } from "../functions/cloudFunctions";
+import { BattlePass } from "../utils/BattlePass";
 
 export const BattlePassSchema = z.object({
-  battlePassId: z.string(),
   tiers: z
     .object({
       tier: z.number().min(1).max(MAX_BP_LEVEL),
       requiredXP: z.number().nonnegative(),
     })
     .array(),
-  expiringAt: z.date(),
+  expiringAt: z.union([z.date(), z.string()]),
 });
 
-export const addBattlePassToDB = async (battlePass = {}) => {
-  await addDoc(collection(db, "battlePass"), battlePass);
+export const addBattlePassToDB = async (battlePass: BattlePass) => {
+  try {
+    const { tiers, expiringAt } = BattlePassSchema.parse(battlePass);
+    const formattedBattlePass = {
+      tiers,
+      expiringAt:
+        expiringAt instanceof Date ? expiringAt.toISOString() : expiringAt,
+    };
+    await addDoc(collection(db, "battlePass"), formattedBattlePass);
+    console.log("Battle Pass added to database!");
+  } catch (error) {
+    console.error("Error adding battle pass to database: ", error);
+    throw error;
+  }
 };
 
-export const getBattlePassFromDB = () => {
-  const collectionRef = collection(db, "battlePass");
-  return onSnapshot(collectionRef, (querySnapshot) => {
+export const getBattlePassFromDB = async (): Promise<BattlePass> => {
+  try {
+    const collectionRef = collection(db, "battlePass");
+    const querySnapshot = await getDocs(collectionRef);
     let latestData: BattlePass | undefined;
     querySnapshot.forEach((doc) => {
       latestData = doc.data() as BattlePass;
@@ -29,6 +41,11 @@ export const getBattlePassFromDB = () => {
     if (latestData !== undefined) {
       return latestData;
     }
-    return undefined;
-  });
+    throw new Error("No data found in the 'battlePass' collection");
+  } catch (error) {
+    console.error("Error getting battle pass from database: ", error);
+    throw error;
+  }
 };
+
+//TODO: write expiring date script to decrement

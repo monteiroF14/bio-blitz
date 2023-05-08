@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
-import Player from "~/utils/player/Player";
 import { api } from "~/utils/api";
+import Player from "~/server/utils/player/PlayerClass";
 
 const LinkHeader = ({ text, url }: { text: string; url?: string }) => {
   const href = url ? `/${url}` : "/";
@@ -20,20 +20,28 @@ const LinkHeader = ({ text, url }: { text: string; url?: string }) => {
 const Header = () => {
   const { data: sessionData } = useSession();
   const email = sessionData?.user?.email ?? "";
-  const { data: doesPlayerExist } = api.player.getPlayerFromDB.useQuery(email, {
+  const getPlayerQuery = api.player.getPlayerFromDB.useQuery(email, {
     enabled: !!email,
   });
-
   const addPlayerMutation = api.player.addPlayerToDB.useMutation();
 
   useEffect(() => {
-    if (!doesPlayerExist) {
-      if (!sessionData) return;
-      const { name, email, image } = sessionData.user;
-      const newPlayer = new Player(name, email, image);
-      addPlayerMutation.mutate(newPlayer);
-    }
-  }, [sessionData, doesPlayerExist, addPlayerMutation]);
+    if (getPlayerQuery.isLoading) return;
+
+    const playerExists = !!getPlayerQuery.data?.playerData;
+    if (playerExists) return;
+
+    if (!sessionData) return;
+
+    const { name, email, image } = sessionData.user;
+    const newPlayer = new Player(name, email, image);
+    addPlayerMutation.mutate(newPlayer);
+  }, [
+    sessionData,
+    getPlayerQuery.isSuccess,
+    getPlayerQuery.isLoading,
+    addPlayerMutation,
+  ]);
 
   return (
     <header className="flex items-center gap-8 px-12 py-6 dark:bg-gray-900">
@@ -44,8 +52,9 @@ const Header = () => {
       </Link>
       <nav className="ml-auto flex gap-8">
         <LinkHeader text="Home" />
-        <LinkHeader text="Feedback" url="feedback" />
-        <LinkHeader text="Account" url="account" />
+        <LinkHeader text="Battle Pass" url="battle-pass" />
+        <LinkHeader text="Contact Us" url="contact-us" />
+        <LinkHeader text="Profile" url="profile" />
       </nav>
       <button
         className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"

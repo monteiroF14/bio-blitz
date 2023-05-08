@@ -1,5 +1,5 @@
 import React from "react";
-import { Quest } from "~/utils/quest/generateQuests";
+import { Quest } from "~/server/utils/quest/generateQuests";
 
 const QuestModal = (quest: Quest) => {
   return (

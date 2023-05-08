@@ -10,9 +10,7 @@
 
 ## Player
 
-- Every 10 levels generate new theme & add to UI for user to edit
-- Make the code for the player to give feedback
-- Create the mutations to update the player's data in the DB
+- Add code to change title in profile page
 
 ## Session
 
@@ -29,6 +27,13 @@
 - Logic to increase the quest frequency (?)
 - Attach quests to users & deprecate questsDone array in players data
 
-## Battle Pass
+## Rewards
 
-- Add the code for each lvl rewards aka skins for the app (background, avatar border, font) & X€ tickets for the bar/canteen/etc
+- player gets a reward every 10 lvls (skin)
+- BP:
+
+  - at each lvl: background, avatar border, font, random title
+    - random title 5, 10, 25 lvl, last should have a 2x multiplier
+  - at 10 lvl: 1€, 2€ & 5€ -> carteira e dps o user escolhe o montante para gerar qr em pdf
+
+- roleta diária 1/10 de ganhar .5€ ou random (secundário)

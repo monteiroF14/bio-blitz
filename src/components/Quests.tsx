@@ -1,6 +1,6 @@
 import React, { memo } from "react";
+import { Quest } from "~/server/utils/quest/generateQuests";
 // import QuestComponent from "./QuestComponent";
-import type { Quest } from "../utils/quest/generateQuests";
 
 const Quests = () => {
   const renderQuests = (questType: Quest["type"]) => {
