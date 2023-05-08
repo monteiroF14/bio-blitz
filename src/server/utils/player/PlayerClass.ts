@@ -3,9 +3,8 @@ import { Quest } from "../quest/generateQuests";
 const START_XP = 0;
 const START_LEVEL = 1;
 const START_QUESTS_DONE: Quest[] = [];
-const START_BP_REWARDS: string[] = [];
 const START_FEEDBACKS_GIVEN: Player["feedbacks"] = [];
-const START_PLAYER_LEVELING_SYSTEM_REWARDS: string[] = [];
+const START_PLAYER_REWARDS: Player["rewards"] = [];
 
 export default class Player {
   name: string;
@@ -20,13 +19,21 @@ export default class Player {
   playerData: {
     currentXP: number;
     currentLevel: number;
-    questsDone: Quest[];
-    title: "Beginner" | "Intermediate" | "Pro Environmentalist";
+    titles: string[];
+    activeTitle: string;
   };
   rewards: {
-    battlePassRewards: string[];
-    playerLevelingSystemRewards: string[];
-  };
+    type: "Theme" | "Title" | "Font" | "AvatarBorder" | "BackgroundImage";
+    title?: string;
+    theme?: {
+      font: string;
+      avatarBorder: string;
+      backgroundImage: string;
+    };
+    font?: string;
+    avatarBorder?: string;
+    backgroundImage?: string;
+  }[];
   feedbacks: {
     description: string;
     rating: number;
@@ -50,25 +57,11 @@ export default class Player {
     this.playerData = {
       currentXP: START_XP,
       currentLevel: START_LEVEL,
-      questsDone: START_QUESTS_DONE,
-      title: "Beginner",
+      titles: ["Beginner"],
+      activeTitle: "Beginner",
     };
-    this.rewards = {
-      battlePassRewards: START_BP_REWARDS,
-      playerLevelingSystemRewards: START_PLAYER_LEVELING_SYSTEM_REWARDS,
-    };
+    this.rewards = START_PLAYER_REWARDS;
     this.feedbacks = START_FEEDBACKS_GIVEN;
-
-    this.playerData.title = this.getTitleByLevel();
-  }
-
-  private getTitleByLevel() {
-    const currentLevel = this.playerData.currentLevel;
-    return currentLevel < 10
-      ? "Beginner"
-      : currentLevel < 20
-      ? "Intermediate"
-      : "Pro Environmentalist";
   }
 }
 

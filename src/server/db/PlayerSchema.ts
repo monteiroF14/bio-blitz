@@ -1,5 +1,4 @@
 import { z } from "zod";
-import QuestSchema from "./QuestSchema";
 
 const PlayerSchema = z.object({
   name: z.string(),
@@ -14,17 +13,31 @@ const PlayerSchema = z.object({
   playerData: z.object({
     currentXP: z.number(),
     currentLevel: z.number(),
-    questsDone: z.array(QuestSchema),
-    title: z.union([
-      z.literal("Beginner"),
-      z.literal("Intermediate"),
-      z.literal("Pro Environmentalist"),
-    ]),
+    activeTitle: z.string(),
+    titles: z.array(z.string()),
   }),
-  rewards: z.object({
-    battlePassRewards: z.array(z.string()),
-    playerLevelingSystemRewards: z.array(z.string()),
-  }),
+  rewards: z.array(
+    z.object({
+      type: z.enum([
+        "Theme",
+        "Title",
+        "Font",
+        "AvatarBorder",
+        "BackgroundImage",
+      ]),
+      title: z.string().optional(),
+      theme: z
+        .object({
+          font: z.string(),
+          avatarBorder: z.string(),
+          backgroundImage: z.string(),
+        })
+        .optional(),
+      font: z.string().optional(),
+      avatarBorder: z.string().optional(),
+      backgroundImage: z.string().optional(),
+    })
+  ),
   feedbacks: z.array(
     z.object({
       description: z.string(),
