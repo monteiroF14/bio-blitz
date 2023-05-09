@@ -1,8 +1,5 @@
-import { Quest } from "../quest/generateQuests";
-
 const START_XP = 0;
 const START_LEVEL = 1;
-const START_QUESTS_DONE: Quest[] = [];
 const START_FEEDBACKS_GIVEN: Player["feedbacks"] = [];
 const START_PLAYER_REWARDS: Player["rewards"] = [];
 
@@ -23,7 +20,7 @@ export default class Player {
     activeTitle: string;
   };
   rewards: {
-    type: "Theme" | "Title" | "Font" | "AvatarBorder" | "BackgroundImage";
+    type: string;
     title?: string;
     theme?: {
       font: string;

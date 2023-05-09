@@ -18,13 +18,7 @@ const PlayerSchema = z.object({
   }),
   rewards: z.array(
     z.object({
-      type: z.enum([
-        "Theme",
-        "Title",
-        "Font",
-        "AvatarBorder",
-        "BackgroundImage",
-      ]),
+      type: z.string(),
       title: z.string().optional(),
       theme: z
         .object({

@@ -29,6 +29,13 @@
 
 ## Rewards
 
+- criar items e a reward ser um item
+
+  - adicionar o campo collection aos items a ver se pertencem a algum tema
+  - "no-collection" ou "nomeDaColecao"
+  - campo "path" para o caminho da img do item ou algo assim
+  - campo name, type, ..
+
 - player gets a reward every 10 lvls (skin)
 - BP:
 

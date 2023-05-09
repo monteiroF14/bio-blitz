@@ -92,7 +92,7 @@ export const increaseXP = async (email: string, XP: number) => {
     }
 
     const { playerData, battlePassData } = player;
-    XP = addXpBoostBasedOnTitle(playerData?.title, XP);
+    XP = addXpBoostBasedOnTitle(playerData?.activeTitle, XP);
 
     const { requiredXP: battlePassRequiredXP } = battlePass.tiers.find(
       (tier) => tier.tier === playerData?.currentLevel
@@ -112,7 +112,8 @@ export const increaseXP = async (email: string, XP: number) => {
       battlePassData.currentLevel = battlePassCurrentLevel;
 
       //TODO: gerar uma reward
-      generateReward();
+      // const generatedReward = generateReward(battlePass, battlePassData);
+      // addRewardToDB(generatedReward)
     } else {
       battlePassData.currentXP += XP;
     }
