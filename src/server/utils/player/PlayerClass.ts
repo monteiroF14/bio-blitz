@@ -1,3 +1,5 @@
+import { Item } from "../Item";
+
 const START_XP = 0;
 const START_LEVEL = 1;
 const START_FEEDBACKS_GIVEN: Player["feedbacks"] = [];
@@ -19,18 +21,7 @@ export default class Player {
     titles: string[];
     activeTitle: string;
   };
-  rewards: {
-    type: string;
-    title?: string;
-    theme?: {
-      font: string;
-      avatarBorder: string;
-      backgroundImage: string;
-    };
-    font?: string;
-    avatarBorder?: string;
-    backgroundImage?: string;
-  }[];
+  rewards: Item[];
   feedbacks: {
     description: string;
     rating: number;

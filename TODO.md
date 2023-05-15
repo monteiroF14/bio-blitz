@@ -29,18 +29,10 @@
 
 ## Rewards
 
-- criar items e a reward ser um item
-
-  - adicionar o campo collection aos items a ver se pertencem a algum tema
-  - "no-collection" ou "nomeDaColecao"
-  - campo "path" para o caminho da img do item ou algo assim
-  - campo name, type, ..
-
 - player gets a reward every 10 lvls (skin)
 - BP:
 
-  - at each lvl: background, avatar border, font, random title
-    - random title 5, 10, 25 lvl, last should have a 2x multiplier
+  - random title 5, 10, 25 lvl, last should have a 2x multiplier
   - at 10 lvl: 1€, 2€ & 5€ -> carteira e dps o user escolhe o montante para gerar qr em pdf
 
 - roleta diária 1/10 de ganhar .5€ ou random (secundário)
