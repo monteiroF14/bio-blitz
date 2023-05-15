@@ -29,6 +29,7 @@
 
 ## Rewards
 
+- code so user gets the rewards when he levels up
 - player gets a reward every 10 lvls (skin)
 - BP:
 
@@ -36,3 +37,7 @@
   - at 10 lvl: 1€, 2€ & 5€ -> carteira e dps o user escolhe o montante para gerar qr em pdf
 
 - roleta diária 1/10 de ganhar .5€ ou random (secundário)
+
+## Battle Pass
+
+- make sure battle pass can't be leveled up when it's at last level
