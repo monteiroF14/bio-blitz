@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ItemSchema } from "./itemUtils";
 
 const PlayerSchema = z.object({
   name: z.string(),
@@ -16,22 +17,7 @@ const PlayerSchema = z.object({
     activeTitle: z.string(),
     titles: z.array(z.string()),
   }),
-  rewards: z.array(
-    z.object({
-      type: z.string(),
-      title: z.string().optional(),
-      theme: z
-        .object({
-          font: z.string(),
-          avatarBorder: z.string(),
-          backgroundImage: z.string(),
-        })
-        .optional(),
-      font: z.string().optional(),
-      avatarBorder: z.string().optional(),
-      backgroundImage: z.string().optional(),
-    })
-  ),
+  rewards: z.array(ItemSchema),
   feedbacks: z.array(
     z.object({
       description: z.string(),

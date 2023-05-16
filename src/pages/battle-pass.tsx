@@ -17,6 +17,8 @@ const BattlePass = () => {
     api.player.getPlayerFromDB.useQuery(email).data?.battlePassData;
   const increasePlayerXPMutation = api.player.increasePlayerXP.useMutation();
 
+  //TODO: create collections and start using them
+
   // useEffect(() => {
   //   const itemsNotInReward = getAllItemsFromDB
   //     ? getAllItemsFromDB.filter(

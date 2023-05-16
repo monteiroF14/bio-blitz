@@ -1,5 +1,11 @@
 import { Item } from "../Item";
 
+export interface Feedback {
+  description: string;
+  rating: number;
+  creationDate: Date;
+}
+
 const START_XP = 0;
 const START_LEVEL = 1;
 const START_FEEDBACKS_GIVEN: Player["feedbacks"] = [];
@@ -22,11 +28,7 @@ export default class Player {
     activeTitle: string;
   };
   rewards: Item[];
-  feedbacks: {
-    description: string;
-    rating: number;
-    creationDate: Date;
-  }[];
+  feedbacks: Feedback[];
 
   constructor(
     name: Player["name"],

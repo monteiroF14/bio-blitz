@@ -53,6 +53,16 @@ export const addItemToDB = async (item: Item) => {
       `Error adding item with type ${item.type} to database: `,
       error
     );
-    throw new Error("Failed to retrieve items from database.");
+  }
+};
+
+export const getCollectionNamesFromItems = async () => {
+  try {
+    const items = await getAllItemsFromDB();
+    const collectionNames = items.map((item) => item.collection);
+    return Array.from(new Set(collectionNames));
+  } catch (error) {
+    console.error("Error retrieving collection names from items: ", error);
+    return [];
   }
 };

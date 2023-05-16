@@ -29,7 +29,6 @@
 
 ## Rewards
 
-- code so user gets the rewards when he levels up
 - player gets a reward every 10 lvls (skin)
 - BP:
 
