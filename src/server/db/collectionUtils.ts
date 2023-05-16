@@ -11,7 +11,7 @@ export const CollectionSchema = z.object({
 
 export const addCollectionToDB = async (collection = {}) => {
   try {
-    const collectionsRef = doc(db, "collections");
+    const collectionsRef = doc(db, "collections", Date.now().toString());
     await setDoc(collectionsRef, collection);
     console.log(`Added collection to database.`);
   } catch (error) {

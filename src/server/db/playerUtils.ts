@@ -15,6 +15,9 @@ import Player, {
 import { getBattlePassFromDB } from "./battlePassUtils";
 import { BattlePass } from "../utils/BattlePass";
 import { Item } from "../utils/Item";
+import { getCollectionByName } from "./collectionUtils";
+
+const PLAYER_LEVEL_XP = 5000;
 
 export const getAllPlayersFromDB = async () => {
   try {
@@ -73,7 +76,7 @@ export const updatePlayerSchoolAndLocation = async (
 
 export const updatePlayerFeedback = async (
   feedback: Feedback,
-  email: Player["email"]
+  email: string
 ) => {
   const playerRef = doc(db, "players", email);
   await updateDoc(playerRef, {
@@ -102,18 +105,16 @@ export const increaseXP = async (email: string, XP: number) => {
 
     const canIncreaseBattlePassLevel =
       battlePassData?.currentXP + XP >= battlePassRequiredXP;
+    const canIncreasePlayerLevel = playerData.currentXP + XP >= PLAYER_LEVEL_XP;
     const isAtLastLevel =
       battlePassData.currentLevel === battlePass.tiers.length;
 
     if (canIncreaseBattlePassLevel) {
-      const { playerCurrentLevel, battlePassCurrentLevel } = increaseTier(
-        playerData?.currentLevel,
+      const { battlePassCurrentLevel } = increaseBattlePassDataTier(
         battlePassData?.currentLevel,
         battlePass
       );
       battlePassData.currentXP += XP - battlePassRequiredXP;
-
-      playerData.currentLevel = playerCurrentLevel;
       battlePassData.currentLevel = battlePassCurrentLevel;
 
       const rewardFromBP = getRewardFromBP(
@@ -125,24 +126,34 @@ export const increaseXP = async (email: string, XP: number) => {
       battlePassData.currentXP += XP;
     }
 
+    if (canIncreasePlayerLevel) {
+      const newPlayerLevel = increasePlayerLevel(playerData.currentLevel);
+
+      //TODO: pegar as collection name e ordenar por data de adição
+      //TODO: ternary com o level do player e dar hardcode nos items q vão ser query
+      const itemsFromCollection = getCollectionByName("name") || [];
+    }
+
     await updatePlayerGameData(email, playerData, battlePassData);
   } catch (error) {
     console.error(error);
   }
 };
 
-const increaseTier = (
-  playerCurrentLevel: Player["playerData"]["currentLevel"],
-  battlePassCurrentLevel: Player["battlePassData"]["currentLevel"],
+const increasePlayerLevel = (playerLevel: number) => {
+  return playerLevel++;
+};
+
+const increaseBattlePassDataTier = (
+  battlePassCurrentLevel: number,
   battlePass: BattlePass
 ) => {
   const isAtLastLevel = battlePassCurrentLevel === battlePass.tiers.length;
   if (!isAtLastLevel) {
     battlePassCurrentLevel++;
   }
-  // playerCurrentLevel++;
 
-  return { playerCurrentLevel, battlePassCurrentLevel };
+  return { battlePassCurrentLevel };
 };
 
 const getRewardFromBP = (level: number, battlePass: BattlePass): Item => {
@@ -150,7 +161,7 @@ const getRewardFromBP = (level: number, battlePass: BattlePass): Item => {
   return selectedLevel?.reward as Item;
 };
 
-const addRewardToDB = async (reward: Item, email: Player["email"]) => {
+const addRewardToDB = async (reward: Item, email: string) => {
   const playerRef = doc(db, "players", email);
   await updateDoc(playerRef, {
     rewards: arrayUnion(reward),
@@ -170,6 +181,4 @@ const updatePlayerGameData = async (
   });
 };
 
-//TODO: pegar todas as rewards do player e adicionar todos os items de uma collection que ele não tem
-//                                                  ou
 //TODO: criar somehow os temas e simplesmente adicionar 1 atrás do outro, sendo igual para todos os players

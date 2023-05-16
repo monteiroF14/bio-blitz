@@ -3,7 +3,6 @@ import Head from "next/head";
 import React, { useEffect } from "react";
 import { api } from "~/utils/api";
 import { BattlePass as BattlePassClass } from "~/server/utils/BattlePass";
-import { Item } from "~/server/utils/Item";
 
 const BattlePass = () => {
   const { data: sessionData } = useSession();
@@ -12,12 +11,9 @@ const BattlePass = () => {
   const createBP = api.battlePass.addBattlePassToDB.useMutation();
   const getAllItemsFromDB = api.item.getAllItemsFromDB.useQuery().data || [];
   const battlePass = api.battlePass.getBattlePassFromDB.useQuery().data;
-  console.log("battlePass", battlePass);
   const playerBattlePassData =
     api.player.getPlayerFromDB.useQuery(email).data?.battlePassData;
   const increasePlayerXPMutation = api.player.increasePlayerXP.useMutation();
-
-  //TODO: create collections and start using them
 
   // useEffect(() => {
   //   const itemsNotInReward = getAllItemsFromDB

@@ -18,12 +18,16 @@ export const ItemSchema = z.object({
   collection: z.string().optional(),
 });
 
-export const getAllItemsFromCollection = (collectionName: string) => {
+export const getAllItemsFromCollection = async (collectionName: string) => {
   const itemsRef = collection(db, "items");
-  const itemsWithCollection = query(
-    itemsRef,
-    where("collection", "==", collectionName)
+  const itemsQuery = query(itemsRef, where("collection", "==", collectionName));
+
+  const querySnapshot = await getDocs(itemsQuery);
+
+  const itemsWithCollection: Item[] = querySnapshot.docs.map(
+    (doc) => doc.data() as Item
   );
+
   return itemsWithCollection;
 };
 
@@ -56,7 +60,7 @@ export const addItemToDB = async (item: Item) => {
   }
 };
 
-export const getCollectionNamesFromItems = async () => {
+export const getCollectionNamesFromAllItems = async () => {
   try {
     const items = await getAllItemsFromDB();
     const collectionNames = items.map((item) => item.collection);
