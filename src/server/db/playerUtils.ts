@@ -15,7 +15,10 @@ import Player, {
 import { getBattlePassFromDB } from "./battlePassUtils";
 import { BattlePass } from "../utils/BattlePass";
 import { Item } from "../utils/Item";
-import { getCollectionByName } from "./collectionUtils";
+import {
+  getAllCollectionNamesFromDB,
+  getCollectionByName,
+} from "./collectionUtils";
 
 const PLAYER_LEVEL_XP = 5000;
 
@@ -75,12 +78,20 @@ export const updatePlayerSchoolAndLocation = async (
 };
 
 export const updatePlayerFeedback = async (
-  feedback: Feedback,
-  email: string
+  email: string,
+  feedback: Feedback
 ) => {
   const playerRef = doc(db, "players", email);
   await updateDoc(playerRef, {
     feedbacks: arrayUnion(feedback),
+  });
+  console.log(`Added feedback to player with email ${email}.`);
+};
+
+export const updatePlayerTitle = async (title: string, email: string) => {
+  const playerRef = doc(db, "players", email);
+  await updateDoc(playerRef, {
+    activeTitle: title,
   });
   console.log(`Added feedback to player with email ${email}.`);
 };
@@ -128,10 +139,36 @@ export const increaseXP = async (email: string, XP: number) => {
 
     if (canIncreasePlayerLevel) {
       const newPlayerLevel = increasePlayerLevel(playerData.currentLevel);
+      playerData.currentXP += XP - PLAYER_LEVEL_XP;
+      playerData.currentLevel = newPlayerLevel;
 
-      //TODO: pegar as collection name e ordenar por data de adição
-      //TODO: ternary com o level do player e dar hardcode nos items q vão ser query
-      const itemsFromCollection = getCollectionByName("name") || [];
+      const collectionNamesFromDB = await getAllCollectionNamesFromDB();
+      const levelsWithReward = collectionNamesFromDB.length;
+
+      for (let i = 0; i <= levelsWithReward * 10; i += 10) {
+        if (playerData.currentLevel === i) {
+          const index = i / 10;
+          const collection = collectionNamesFromDB[index];
+
+          if (collection !== undefined) {
+            const levelRewards = await getCollectionByName(collection);
+
+            if (levelRewards.length) {
+              await Promise.all(
+                levelRewards.map(async (reward) => {
+                  await addRewardToDB(reward, email);
+                })
+              );
+            } else {
+              console.log("No rewards left");
+            }
+          } else {
+            console.log("Invalid collection");
+          }
+        }
+      }
+    } else {
+      playerData.currentXP += XP;
     }
 
     await updatePlayerGameData(email, playerData, battlePassData);
@@ -141,7 +178,7 @@ export const increaseXP = async (email: string, XP: number) => {
 };
 
 const increasePlayerLevel = (playerLevel: number) => {
-  return playerLevel++;
+  return ++playerLevel;
 };
 
 const increaseBattlePassDataTier = (
@@ -170,7 +207,7 @@ const addRewardToDB = async (reward: Item, email: string) => {
 };
 
 const updatePlayerGameData = async (
-  email: Player["email"],
+  email: string,
   playerData: Player["playerData"],
   battlePassData: Player["battlePassData"]
 ) => {
@@ -180,5 +217,3 @@ const updatePlayerGameData = async (
     battlePassData: battlePassData,
   });
 };
-
-//TODO: criar somehow os temas e simplesmente adicionar 1 atrás do outro, sendo igual para todos os players

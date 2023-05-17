@@ -1,6 +1,12 @@
 import { z } from "zod";
 import { ItemSchema } from "./itemUtils";
 
+export const FeedbackSchema = z.object({
+  description: z.string(),
+  rating: z.number(),
+  creationDate: z.date(),
+});
+
 const PlayerSchema = z.object({
   name: z.string(),
   email: z.string(),
@@ -18,13 +24,7 @@ const PlayerSchema = z.object({
     titles: z.array(z.string()),
   }),
   rewards: z.array(ItemSchema),
-  feedbacks: z.array(
-    z.object({
-      description: z.string(),
-      rating: z.number(),
-      creationDate: z.date(),
-    })
-  ),
+  feedbacks: z.array(FeedbackSchema),
 });
 
 export default PlayerSchema;

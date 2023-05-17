@@ -4,10 +4,45 @@ import Loading from "./Loading";
 import SelectPlayerTitleForm from "./SelectPlayerTitleForm";
 import AutoCompleteForm from "./AutoCompleteForm";
 import Player from "~/server/utils/player/PlayerClass";
+import { api } from "~/utils/api";
 
 const libraries: LoadScriptProps["libraries"] = ["places"];
 
+type EditProfileData = {
+  [key: string]: string | File;
+};
+
 const EditPlayerForm = ({ player }: { player: Player }) => {
+  const editPlayerSchoolAndLocation =
+    api.player.updatePlayerSchoolAndLocation.useMutation();
+  const editPlayerTitle = api.player.updatePlayerTitle.useMutation();
+
+  const handleEditProfileFormSubmit = (evt: React.FormEvent) => {
+    evt.preventDefault();
+    const formData = new FormData(evt.target as HTMLFormElement);
+
+    const editProfileData: EditProfileData = Object.fromEntries(
+      formData.entries()
+    ) as EditProfileData;
+
+    const {
+      playerTitleCombo: selectedTitle,
+      locationInput: selectedLocation,
+      schoolsInput: selectedSchool,
+    } = editProfileData;
+
+    editPlayerTitle.mutate({
+      email: player.email,
+      title: selectedTitle as string,
+    });
+
+    editPlayerSchoolAndLocation.mutate({
+      location: selectedLocation as string,
+      school: selectedSchool as string,
+      email: player.email,
+    });
+  };
+
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
@@ -17,7 +52,7 @@ const EditPlayerForm = ({ player }: { player: Player }) => {
   if (!isLoaded) return <Loading />;
 
   return (
-    <form className=" w-full space-y-8">
+    <form className=" w-full space-y-8" onSubmit={handleEditProfileFormSubmit}>
       <SelectPlayerTitleForm playerData={player.playerData} />
       <AutoCompleteForm email={player.email} />
       <button

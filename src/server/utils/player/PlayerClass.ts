@@ -25,6 +25,7 @@ export default class Player {
     currentXP: number;
     currentLevel: number;
     titles: string[];
+    // xpMultiplier: number;
     activeTitle: string;
   };
   rewards: Item[];

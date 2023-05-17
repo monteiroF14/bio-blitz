@@ -6,36 +6,11 @@ import {
   ComboboxList,
   ComboboxOption,
 } from "@reach/combobox";
-import { api } from "~/utils/api";
 import { useState } from "react";
 import "@reach/combobox/styles.css";
 
 const AutoCompleteForm = ({ email }: { email: string }) => {
   const [location, setLocation] = useState("");
-  const [school, setSchool] = useState("");
-
-  const newLocationAndSchool =
-    api.player.updatePlayerSchoolAndLocation.useMutation();
-
-  // const handleLocationSchoolFormSubmit = (evt: React.FormEvent) => {
-  //   evt.preventDefault();
-  //   const formData = new FormData(evt.target as HTMLFormElement);
-  //   const formValues = Object.fromEntries(formData.entries());
-  //   const { locationInput: selectedLocation, schoolInput: selectedSchool } =
-  //     formValues;
-
-  //   setLocation(selectedLocation as string);
-  //   setSchool(selectedSchool as string);
-
-  //   newLocationAndSchool.mutate({
-  //     email: email,
-  //     location: location,
-  //     school: school,
-  //   });
-
-  //   const form = evt.target as HTMLFormElement;
-  //   form.reset();
-  // };
 
   return (
     <>
@@ -113,9 +88,14 @@ const SchoolInput = ({ selectedLocation }: { selectedLocation: string }) => {
       <select
         name="schoolsInput"
         id="schoolsInput"
-        // required
+        defaultValue="ESMAD"
+        required
         className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-      ></select>
+      >
+        <option value="ESMAD">
+          Escola Superior de Media Artes e Design - Politécnico do Porto
+        </option>
+      </select>
     </section>
   );
 };

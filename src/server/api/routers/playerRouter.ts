@@ -5,9 +5,11 @@ import {
   getAllPlayersFromDB,
   getPlayerFromDB,
   increaseXP,
+  updatePlayerFeedback,
   updatePlayerSchoolAndLocation,
+  updatePlayerTitle,
 } from "~/server/db/playerUtils";
-import PlayerSchema from "~/server/db/PlayerSchema";
+import PlayerSchema, { FeedbackSchema } from "~/server/db/PlayerSchema";
 
 export const playerRouter = createTRPCRouter({
   getAllPlayersFromDB: publicProcedure.query(async () => {
@@ -41,6 +43,26 @@ export const playerRouter = createTRPCRouter({
         input.school
       );
     }),
+  updatePlayerTitle: publicProcedure
+    .input(
+      z.object({
+        email: z.string(),
+        title: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      await updatePlayerTitle(input.email, input.title);
+    }),
+  updatePlayerFeedback: publicProcedure
+    .input(
+      z.object({
+        email: z.string(),
+        feedback: FeedbackSchema,
+      })
+    )
+    .mutation(async ({ input }) => {
+      await updatePlayerFeedback(input.email, input.feedback);
+    }),
   increasePlayerXP: publicProcedure
     .input(
       z.object({
@@ -49,8 +71,7 @@ export const playerRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
+      await increaseXP(input.email, input.XP);
       console.log(`Increased ${input.XP} XP on player ${input.email}`);
-      const updatedPlayer = await increaseXP(input.email, input.XP);
-      console.log(updatedPlayer);
     }),
 });
