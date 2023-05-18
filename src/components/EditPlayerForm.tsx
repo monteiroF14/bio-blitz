@@ -5,6 +5,7 @@ import SelectPlayerTitleForm from "./SelectPlayerTitleForm";
 import AutoCompleteForm from "./AutoCompleteForm";
 import Player from "~/server/utils/player/PlayerClass";
 import { api } from "~/utils/api";
+import { hashEmail } from "./Header";
 
 const libraries: LoadScriptProps["libraries"] = ["places"];
 
@@ -32,14 +33,14 @@ const EditPlayerForm = ({ player }: { player: Player }) => {
     } = editProfileData;
 
     editPlayerTitle.mutate({
-      email: player.email,
+      uid: hashEmail(player.email),
       title: selectedTitle as string,
     });
 
     editPlayerSchoolAndLocation.mutate({
       location: selectedLocation as string,
       school: selectedSchool as string,
-      email: player.email,
+      uid: player.email,
     });
   };
 
@@ -54,7 +55,7 @@ const EditPlayerForm = ({ player }: { player: Player }) => {
   return (
     <form className=" w-full space-y-8" onSubmit={handleEditProfileFormSubmit}>
       <SelectPlayerTitleForm playerData={player.playerData} />
-      <AutoCompleteForm email={player.email} />
+      <AutoCompleteForm />
       <button
         type="submit"
         className="w-1/3 rounded-lg bg-blue-700 p-2.5 px-12 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
