@@ -3,10 +3,13 @@ import Head from "next/head";
 import React, { useEffect } from "react";
 import { api } from "~/utils/api";
 import { BattlePass as BattlePassClass } from "~/server/utils/BattlePass";
+import { hashEmail } from "~/components/Header";
 
 const BattlePass = () => {
   const { data: sessionData } = useSession();
-  const { email = "" } = sessionData?.user || {};
+  const email = sessionData?.user?.email
+    ? hashEmail(sessionData.user.email)
+    : "";
 
   const createBP = api.battlePass.addBattlePassToDB.useMutation();
   const getAllItemsFromDB = api.item.getAllItemsFromDB.useQuery().data || [];
@@ -15,6 +18,7 @@ const BattlePass = () => {
     api.player.getPlayerFromDB.useQuery(email).data?.battlePassData;
   const increasePlayerXPMutation = api.player.increasePlayerXP.useMutation();
 
+  //TODO: code that creates a new BP
   // useEffect(() => {
   //   const itemsNotInReward = getAllItemsFromDB
   //     ? getAllItemsFromDB.filter(
@@ -29,7 +33,7 @@ const BattlePass = () => {
 
   const handleIncreaseXP = () => {
     increasePlayerXPMutation.mutate({
-      email: email,
+      uid: email,
       XP: 3000,
     });
   };

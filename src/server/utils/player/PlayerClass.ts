@@ -8,6 +8,8 @@ export interface Feedback {
 
 const START_XP = 0;
 const START_LEVEL = 1;
+const START_XP_MULTIPLIER = 1;
+const START_WALLET_VALUE = 0;
 const START_FEEDBACKS_GIVEN: Player["feedbacks"] = [];
 const START_PLAYER_REWARDS: Player["rewards"] = [];
 
@@ -25,9 +27,11 @@ export default class Player {
     currentXP: number;
     currentLevel: number;
     titles: string[];
-    // xpMultiplier: number;
+    xpMultiplier: number;
     activeTitle: string;
   };
+  wallet: number;
+  userType: string;
   rewards: Item[];
   feedbacks: Feedback[];
 
@@ -49,20 +53,12 @@ export default class Player {
       currentXP: START_XP,
       currentLevel: START_LEVEL,
       titles: ["Beginner"],
+      xpMultiplier: START_XP_MULTIPLIER,
       activeTitle: "Beginner",
     };
+    this.wallet = START_WALLET_VALUE;
+    this.userType = "user";
     this.rewards = START_PLAYER_REWARDS;
     this.feedbacks = START_FEEDBACKS_GIVEN;
-  }
-}
-
-export function addXpBoostBasedOnTitle(title: string, XP: number) {
-  switch (title) {
-    case "Intermediate":
-      return (XP *= 1.2);
-    case "Pro Environmentalist":
-      return (XP *= 1.5);
-    default:
-      return XP;
   }
 }

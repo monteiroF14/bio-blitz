@@ -6,21 +6,25 @@ import {
   ComboboxList,
   ComboboxOption,
 } from "@reach/combobox";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import "@reach/combobox/styles.css";
 
-const AutoCompleteForm = ({ email }: { email: string }) => {
+const AutoCompleteForm = () => {
   const [location, setLocation] = useState("");
 
   return (
     <>
-      <LocationInput />
+      <LocationInput setLocation={setLocation} />
       <SchoolInput selectedLocation={location} />
     </>
   );
 };
 
-const LocationInput = () => {
+const LocationInput = ({
+  setLocation,
+}: {
+  setLocation: Dispatch<SetStateAction<string>>;
+}) => {
   const {
     ready,
     value,
@@ -35,6 +39,7 @@ const LocationInput = () => {
 
   const handleSelect = (address: string) => {
     setValue(address, false);
+    setLocation(address);
     clearSuggestions();
   };
 

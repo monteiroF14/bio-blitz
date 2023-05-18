@@ -21,8 +21,11 @@ const PlayerSchema = z.object({
     currentXP: z.number(),
     currentLevel: z.number(),
     activeTitle: z.string(),
+    xpMultiplier: z.number(),
     titles: z.array(z.string()),
   }),
+  wallet: z.number(),
+  userType: z.string(),
   rewards: z.array(ItemSchema),
   feedbacks: z.array(FeedbackSchema),
 });

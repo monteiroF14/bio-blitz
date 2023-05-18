@@ -10,7 +10,7 @@
 
 ## Player
 
-- Add code to change title in profile page
+- continue creating wallet functions
 
 ## Session
 
@@ -29,13 +29,8 @@
 
 ## Rewards
 
-- player gets a reward every 10 lvls (skin)
-- BP:
-
-  - random title 5, 10, 25 lvl, last should have a 2x multiplier
-  - at 10 lvl: 1€, 2€ & 5€ -> carteira e dps o user escolhe o montante para gerar qr em pdf
-
-- roleta diária 1/10 de ganhar .5€ ou random (secundário)
+- random title 5, 10, 25 lvl, last should have a 2x multiplier
+- at 10 lvl: 1€, 2€ & 5€ -> carteira e dps o user escolhe o montante para gerar qr em pdf
 
 ## Battle Pass
 

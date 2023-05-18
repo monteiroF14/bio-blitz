@@ -8,6 +8,7 @@ import {
   updatePlayerFeedback,
   updatePlayerSchoolAndLocation,
   updatePlayerTitle,
+  updatePlayerWallet,
 } from "~/server/db/playerUtils";
 import PlayerSchema, { FeedbackSchema } from "~/server/db/PlayerSchema";
 
@@ -23,22 +24,27 @@ export const playerRouter = createTRPCRouter({
       return player;
     }),
   addPlayerToDB: publicProcedure
-    .input(PlayerSchema)
+    .input(
+      z.object({
+        uid: z.string(),
+        player: PlayerSchema,
+      })
+    )
     .mutation(async ({ input }) => {
-      const player = await addPlayerToDB(input.email, input);
+      const player = await addPlayerToDB(input.uid, input.player);
       return player;
     }),
   updatePlayerSchoolAndLocation: publicProcedure
     .input(
       z.object({
-        email: z.string(),
+        uid: z.string(),
         location: z.string(),
         school: z.string(),
       })
     )
     .mutation(async ({ input }) => {
       await updatePlayerSchoolAndLocation(
-        input.email,
+        input.uid,
         input.location,
         input.school
       );
@@ -46,32 +52,43 @@ export const playerRouter = createTRPCRouter({
   updatePlayerTitle: publicProcedure
     .input(
       z.object({
-        email: z.string(),
+        uid: z.string(),
         title: z.string(),
       })
     )
     .mutation(async ({ input }) => {
-      await updatePlayerTitle(input.email, input.title);
+      await updatePlayerTitle(input.uid, input.title);
     }),
   updatePlayerFeedback: publicProcedure
     .input(
       z.object({
-        email: z.string(),
+        uid: z.string(),
         feedback: FeedbackSchema,
       })
     )
     .mutation(async ({ input }) => {
-      await updatePlayerFeedback(input.email, input.feedback);
+      await updatePlayerFeedback(input.uid, input.feedback);
+    }),
+  updatePlayerWallet: publicProcedure
+    .input(
+      z.object({
+        uid: z.string(),
+        amount: z.number(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      await updatePlayerWallet(input.uid, input.amount);
+      console.log(`Updated ${input.uid}'s wallet in ${input.amount}`);
     }),
   increasePlayerXP: publicProcedure
     .input(
       z.object({
-        email: z.string(),
+        uid: z.string(),
         XP: z.number(),
       })
     )
     .mutation(async ({ input }) => {
-      await increaseXP(input.email, input.XP);
-      console.log(`Increased ${input.XP} XP on player ${input.email}`);
+      await increaseXP(input.uid, input.XP);
+      console.log(`Increased ${input.XP} XP on player ${input.uid}`);
     }),
 });

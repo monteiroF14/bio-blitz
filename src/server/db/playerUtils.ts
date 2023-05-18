@@ -4,14 +4,12 @@ import {
   doc,
   getDoc,
   getDocs,
+  increment,
   setDoc,
   updateDoc,
 } from "firebase/firestore";
 import { db } from "./firebase";
-import Player, {
-  Feedback,
-  addXpBoostBasedOnTitle,
-} from "../utils/player/PlayerClass";
+import Player, { Feedback } from "../utils/player/PlayerClass";
 import { getBattlePassFromDB } from "./battlePassUtils";
 import { BattlePass } from "../utils/BattlePass";
 import { Item } from "../utils/Item";
@@ -25,90 +23,91 @@ const PLAYER_LEVEL_XP = 5000;
 export const getAllPlayersFromDB = async () => {
   try {
     const playersSnapshot = await getDocs(collection(db, "players"));
-    return playersSnapshot.docs.map((doc) => doc.data());
+    return playersSnapshot.docs.map((doc) => doc.data()) as Player[];
   } catch (error) {
     console.error("Error retrieving all players: ", error);
     return [];
   }
 };
 
-export const getPlayerFromDB = async (email: string) => {
+export const getPlayerFromDB = async (uid: string) => {
   try {
-    const playerSnapshot = await getDoc(doc(db, "players", email));
+    const playerSnapshot = await getDoc(doc(db, "players", uid));
     return playerSnapshot.data() as Player;
   } catch (error) {
-    console.error(`Error retrieving player with email ${email}: `, error);
+    console.error(`Error retrieving player with id ${uid}: `, error);
     return null;
   }
 };
 
-export const addPlayerToDB = async (email: string, player = {}) => {
+export const addPlayerToDB = async (uid: string, player: Player) => {
   try {
-    const playerRef = doc(db, "players", email);
+    const playerRef = doc(db, "players", uid);
     await setDoc(playerRef, player);
-    console.log(`Added player with email ${email} to database.`);
+    console.log(`Added player to database.`);
   } catch (error) {
-    console.error(
-      `Error adding player with email ${email} to database: `,
-      error
-    );
+    console.error(`Error adding player to database: `, error);
   }
 };
 
 export const updatePlayerSchoolAndLocation = async (
-  email: string,
+  uid: string,
   location: string,
   school: string
 ) => {
   try {
-    const playerRef = doc(db, "players", email);
+    const playerRef = doc(db, "players", uid);
     await updateDoc(playerRef, {
       location: location,
       school: school,
     });
     console.log(
-      `Added location ${location} and school ${school} to player with email ${email}.`
+      `Added location ${location} and school ${school} to player with id ${uid}.`
     );
   } catch (error) {
     console.error(
-      `Error adding location ${location} and school ${school} to player with email ${email}: `,
+      `Error adding location ${location} and school ${school} to player with id ${uid}: `,
       error
     );
   }
 };
 
-export const updatePlayerFeedback = async (
-  email: string,
-  feedback: Feedback
-) => {
-  const playerRef = doc(db, "players", email);
+export const updatePlayerFeedback = async (uid: string, feedback: Feedback) => {
+  const playerRef = doc(db, "players", uid);
   await updateDoc(playerRef, {
     feedbacks: arrayUnion(feedback),
   });
-  console.log(`Added feedback to player with email ${email}.`);
+  console.log(`Added feedback to player with id ${uid}.`);
 };
 
-export const updatePlayerTitle = async (title: string, email: string) => {
-  const playerRef = doc(db, "players", email);
+export const updatePlayerTitle = async (uid: string, title: string) => {
+  const playerRef = doc(db, "players", uid);
   await updateDoc(playerRef, {
     activeTitle: title,
   });
-  console.log(`Added feedback to player with email ${email}.`);
+  console.log(`Added feedback to player with id ${uid}.`);
 };
 
-export const increaseXP = async (email: string, XP: number) => {
+export const updatePlayerWallet = async (uid: string, amount: number) => {
+  const playerRef = doc(db, "players", uid);
+  await updateDoc(playerRef, {
+    wallet: increment(amount),
+  });
+};
+
+export const increaseXP = async (uid: string, XP: number) => {
   try {
     const [battlePass, player] = await Promise.all([
       getBattlePassFromDB(),
-      getPlayerFromDB(email),
+      getPlayerFromDB(uid),
     ]);
 
     if (!player) {
-      throw new Error(`Player with email ${email} does not exist`);
+      throw new Error(`Player with uid ${uid} does not exist`);
     }
 
     const { playerData, battlePassData } = player;
-    XP = addXpBoostBasedOnTitle(playerData?.activeTitle, XP);
+    // XP = addXpBoostBasedOnTitle(playerData?.activeTitle, XP);
 
     const { requiredXP: battlePassRequiredXP } = battlePass.tiers.find(
       (tier) => tier.tier === playerData?.currentLevel
@@ -132,7 +131,7 @@ export const increaseXP = async (email: string, XP: number) => {
         battlePassData.currentLevel,
         battlePass
       );
-      await addRewardToDB(rewardFromBP, email);
+      await addRewardToDB(uid, rewardFromBP);
     } else if (!isAtLastLevel) {
       battlePassData.currentXP += XP;
     }
@@ -156,7 +155,7 @@ export const increaseXP = async (email: string, XP: number) => {
             if (levelRewards.length) {
               await Promise.all(
                 levelRewards.map(async (reward) => {
-                  await addRewardToDB(reward, email);
+                  await addRewardToDB(uid, reward);
                 })
               );
             } else {
@@ -171,7 +170,7 @@ export const increaseXP = async (email: string, XP: number) => {
       playerData.currentXP += XP;
     }
 
-    await updatePlayerGameData(email, playerData, battlePassData);
+    await updatePlayerGameData(uid, playerData, battlePassData);
   } catch (error) {
     console.error(error);
   }
@@ -198,20 +197,20 @@ const getRewardFromBP = (level: number, battlePass: BattlePass): Item => {
   return selectedLevel?.reward as Item;
 };
 
-const addRewardToDB = async (reward: Item, email: string) => {
-  const playerRef = doc(db, "players", email);
+const addRewardToDB = async (uid: string, reward: Item) => {
+  const playerRef = doc(db, "players", uid);
   await updateDoc(playerRef, {
     rewards: arrayUnion(reward),
   });
-  console.log(`Added reward to player with email ${email}.`);
+  console.log(`Added reward to player with id ${uid}.`);
 };
 
 const updatePlayerGameData = async (
-  email: string,
+  uid: string,
   playerData: Player["playerData"],
   battlePassData: Player["battlePassData"]
 ) => {
-  const playerRef = doc(db, "players", email);
+  const playerRef = doc(db, "players", uid);
   await updateDoc(playerRef, {
     playerData: playerData,
     battlePassData: battlePassData,

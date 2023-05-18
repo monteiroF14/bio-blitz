@@ -5,11 +5,15 @@ import Loading from "~/components/Loading";
 import Head from "next/head";
 import { api } from "~/utils/api";
 import Player from "~/server/utils/player/PlayerClass";
+import { hashEmail } from "~/components/Header";
 
 const Profile = () => {
   const { data: sessionData } = useSession();
-  const email = sessionData?.user.email || "";
-  const playerQuery = api.player.getPlayerFromDB.useQuery(email);
+  const userId = sessionData?.user?.email
+    ? hashEmail(sessionData?.user?.email)
+    : "";
+
+  const playerQuery = api.player.getPlayerFromDB.useQuery(userId);
   const player = playerQuery.data as Player;
 
   if (!sessionData || playerQuery.isLoading) {

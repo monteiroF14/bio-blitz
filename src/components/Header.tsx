@@ -1,8 +1,15 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import Player from "~/server/utils/player/PlayerClass";
+import crypto from "crypto";
+
+export const hashEmail = (email: string) => {
+  const hash = crypto.createHash("sha256");
+  hash.update(email);
+  return hash.digest("hex");
+};
 
 const LinkHeader = ({ text, url }: { text: string; url?: string }) => {
   const href = url ? `/${url}` : "/";
@@ -19,7 +26,10 @@ const LinkHeader = ({ text, url }: { text: string; url?: string }) => {
 
 const Header = () => {
   const { data: sessionData } = useSession();
-  const email = sessionData?.user?.email ?? "";
+  const email = sessionData?.user?.email
+    ? hashEmail(sessionData.user.email)
+    : "";
+
   const getPlayerQuery = api.player.getPlayerFromDB.useQuery(email, {
     enabled: !!email,
   });
@@ -28,20 +38,12 @@ const Header = () => {
   useEffect(() => {
     if (getPlayerQuery.isLoading) return;
 
-    const playerExists = !!getPlayerQuery.data?.playerData;
-    if (playerExists) return;
-
-    if (!sessionData) return;
-
-    const { name, email, image } = sessionData.user;
-    const newPlayer = new Player(name, email, image);
-    addPlayerMutation.mutate(newPlayer);
-  }, [
-    sessionData,
-    getPlayerQuery.isSuccess,
-    getPlayerQuery.isLoading,
-    addPlayerMutation,
-  ]);
+    if (sessionData && sessionData.user.email && !getPlayerQuery.isSuccess) {
+      const { name, email, image } = sessionData.user;
+      const newPlayer = new Player(name, email, image);
+      addPlayerMutation.mutate({ uid: hashEmail(email), player: newPlayer });
+    }
+  }, [sessionData, addPlayerMutation, getPlayerQuery]);
 
   return (
     <header className="flex items-center gap-8 px-12 py-6 dark:bg-gray-900">
@@ -51,11 +53,16 @@ const Header = () => {
         </span>
       </Link>
       <nav className="ml-auto flex gap-8">
-        <LinkHeader text="Home" />
         <LinkHeader text="Battle Pass" url="battle-pass" />
         <LinkHeader text="Contact Us" url="contact-us" />
         <LinkHeader text="Profile" url="profile" />
       </nav>
+
+      {sessionData && (
+        <p className="block dark:border-gray-700 dark:text-white ">
+          {getPlayerQuery.data?.wallet}€
+        </p>
+      )}
       <button
         className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
         onClick={sessionData ? () => void signOut() : () => void signIn()}
