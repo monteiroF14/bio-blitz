@@ -7,7 +7,7 @@ import { getAllItemsFromDB } from "~/server/db/itemUtils";
 import { BattlePass } from "~/server/utils/BattlePass";
 
 const BP_LEVEL_XP = 5000;
-const MAX_BP_LEVEL = 30;
+export const MAX_BP_LEVEL = 30;
 
 export default async function generateBattlePass(
   request: NextApiRequest,
