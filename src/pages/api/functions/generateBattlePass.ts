@@ -5,7 +5,6 @@ import {
 } from "~/server/db/battlePassUtils";
 import { getAllItemsFromDB } from "~/server/db/itemUtils";
 import { BattlePass } from "~/server/utils/BattlePass";
-import { api } from "~/utils/api";
 
 const BP_LEVEL_XP = 5000;
 const MAX_BP_LEVEL = 30;

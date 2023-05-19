@@ -1,16 +1,20 @@
 {
-  "functions": {
-    "api/functions/generateBattlePass": {
+  "crons": [
+    {
+      "path": "/api/functions/generateBattlePass",
       "schedule": "0 0 1 * *"
     },
-    "api/functions/generateDailyQuests": {
+    {
+      "path": "/api/functions/generateDailyQuests",
       "schedule": "0 0 * * *"
     },
-    "api/functions/generateWeeklyQuests": {
+    {
+      "path": "/api/functions/generateWeeklyQuests",
       "schedule": "0 0 1 * *"
     },
-    "api/functions/generateMonthlyQuests": {
+    {
+      "path": "/api/functions/generateMonthlyQuests",
       "schedule": "0 0 1 * *"
     }
-  }
+  ]
 }
