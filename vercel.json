@@ -1,8 +1,0 @@
-{
-  "crons": [
-    {
-      "path": "/api/functions/generateBattlePass",
-      "schedule": "0 0 1 * *"
-    }
-  ]
-}

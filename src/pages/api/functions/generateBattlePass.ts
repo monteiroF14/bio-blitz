@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { env } from "~/env.mjs";
 import {
   addBattlePassToDB,
   getBattlePassFromDB,
@@ -9,11 +10,18 @@ import { BattlePass } from "~/server/utils/BattlePass";
 const BP_LEVEL_XP = 5000;
 export const MAX_BP_LEVEL = 30;
 
-export default async function generateBattlePass(
+async function generateBattlePass(
   request: NextApiRequest,
   response: NextApiResponse
 ) {
   try {
+    const tokenFromRequest = request.headers.authorization;
+
+    if (tokenFromRequest !== env.CRON_TOKEN) {
+      response.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
     const [battlePass, allItemsFromDB] = await Promise.all([
       getBattlePassFromDB(),
       getAllItemsFromDB(),
@@ -41,3 +49,5 @@ export default async function generateBattlePass(
     response.status(500).json({ error: "An internal server error occurred." });
   }
 }
+
+export default generateBattlePass;

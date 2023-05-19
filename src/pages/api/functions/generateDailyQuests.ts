@@ -1,14 +1,22 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { env } from "~/env.mjs";
 import { addQuestToDB } from "~/server/db/questUtils";
 import { generateQuests } from "~/server/utils/quest/generateQuests";
 
 const DAILY_QUESTS_COUNT = 4;
 
-export default async function generateDailyQuests(
+async function generateDailyQuests(
   request: NextApiRequest,
   response: NextApiResponse
 ) {
   try {
+    const tokenFromRequest = request.headers.authorization;
+
+    if (tokenFromRequest !== env.CRON_TOKEN) {
+      response.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
     const generatedQuests = generateQuests(DAILY_QUESTS_COUNT, "daily");
     const addQuestPromises = generatedQuests.map((quest) =>
       addQuestToDB(quest.questId, quest)
@@ -27,3 +35,5 @@ export default async function generateDailyQuests(
     response.status(500).json({ error: "An internal server error occurred." });
   }
 }
+
+export default generateDailyQuests;
