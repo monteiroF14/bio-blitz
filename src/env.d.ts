@@ -4,6 +4,7 @@ export const env: {
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET: string;
   NEXT_GOOGLE_MAPS_API_KEY: string;
+  CRON_TOKEN: string;
   FIREBASE_API_KEY: string;
   FIREBASE_AUTH_DOMAIN: string;
   FIREBASE_DATABASE_URL: string;
