@@ -78,7 +78,7 @@ export const playerRouter = createTRPCRouter({
     )
     .mutation(async ({ input }) => {
       await updatePlayerWallet(input.uid, input.amount);
-      console.log(`Updated ${input.uid}'s wallet in ${input.amount}`);
+      console.log(`Updated wallet in ${input.amount}€`);
     }),
   increasePlayerXP: publicProcedure
     .input(
@@ -89,6 +89,6 @@ export const playerRouter = createTRPCRouter({
     )
     .mutation(async ({ input }) => {
       await increaseXP(input.uid, input.XP);
-      console.log(`Increased ${input.XP} XP on player ${input.uid}`);
+      console.log(`Increased ${input.XP} XP`);
     }),
 });

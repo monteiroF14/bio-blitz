@@ -36,6 +36,7 @@ export const addBattlePassToDB = async (battlePass = {}) => {
       formattedBattlePass as BattlePass
     );
     console.log("Battle Pass added to database!");
+    return formattedBattlePass;
   } catch (error) {
     console.error("Error adding battle pass to database: ", error);
     throw error;

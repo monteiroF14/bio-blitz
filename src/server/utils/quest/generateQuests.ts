@@ -1,4 +1,5 @@
 import { addDays, addWeeks, addMonths } from "date-fns";
+import { uuid } from "uuidv4";
 
 export interface Quest {
   questId: string;
@@ -50,7 +51,7 @@ export const generateQuests = (
   };
 
   return Array.from({ length: numberOfQuests }, () => ({
-    questId: Date.now().toString(),
+    questId: uuid(),
     description: getQuestDescription(),
     type: questType,
     XP: setXpBasedOnType(questType),

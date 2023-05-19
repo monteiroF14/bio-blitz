@@ -1,8 +1,6 @@
 import { useSession } from "next-auth/react";
 import Head from "next/head";
-import React, { useEffect } from "react";
 import { api } from "~/utils/api";
-import { BattlePass as BattlePassClass } from "~/server/utils/BattlePass";
 import { hashEmail } from "~/components/Header";
 
 const BattlePass = () => {
@@ -11,23 +9,10 @@ const BattlePass = () => {
     ? hashEmail(sessionData.user.email)
     : "";
 
-  const createBP = api.battlePass.addBattlePassToDB.useMutation();
-  const getAllItemsFromDB = api.item.getAllItemsFromDB.useQuery().data || [];
   const battlePass = api.battlePass.getBattlePassFromDB.useQuery().data;
   const playerBattlePassData =
     api.player.getPlayerFromDB.useQuery(email).data?.battlePassData;
   const increasePlayerXPMutation = api.player.increasePlayerXP.useMutation();
-
-  //TODO: code that creates a new BP
-  // useEffect(() => {
-  //   const itemsNotInReward = getAllItemsFromDB
-  //     ? getAllItemsFromDB.filter(
-  //         (item) =>
-  //           !battlePass?.tiers.flatMap((tier) => tier.reward).includes(item)
-  //       )
-  //     : [];
-  //   createBP.mutate(new BattlePassClass(5000, 30, itemsNotInReward));
-  // }, []);
 
   if (!battlePass || !playerBattlePassData) return;
 

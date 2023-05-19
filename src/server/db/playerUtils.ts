@@ -18,7 +18,7 @@ import {
   getCollectionByName,
 } from "./collectionUtils";
 
-const PLAYER_LEVEL_XP = 5000;
+const PLAYER_LEVEL_XP = 4000;
 
 export const getAllPlayersFromDB = async () => {
   try {
@@ -131,6 +131,7 @@ export const increaseXP = async (uid: string, XP: number) => {
         battlePassData.currentLevel,
         battlePass
       );
+
       await addRewardToDB(uid, rewardFromBP);
     } else if (!isAtLastLevel) {
       battlePassData.currentXP += XP;
@@ -199,10 +200,14 @@ const getRewardFromBP = (level: number, battlePass: BattlePass): Item => {
 
 const addRewardToDB = async (uid: string, reward: Item) => {
   const playerRef = doc(db, "players", uid);
-  await updateDoc(playerRef, {
-    rewards: arrayUnion(reward),
-  });
-  console.log(`Added reward to player with id ${uid}.`);
+  if (reward.type !== "money") {
+    await updateDoc(playerRef, {
+      rewards: arrayUnion(reward),
+    });
+    console.log(`Added reward to player.`);
+  } else if (reward.amount) {
+    await updatePlayerWallet(uid, reward.amount);
+  }
 };
 
 const updatePlayerGameData = async (

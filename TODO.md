@@ -3,6 +3,7 @@
 ## Backend
 
 - Make the cloud functions work
+- make admin section
 
 ## UI
 
@@ -11,6 +12,7 @@
 ## Player
 
 - continue creating wallet functions
+- fetch schools from places API
 
 ## Session
 

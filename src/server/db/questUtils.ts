@@ -19,4 +19,5 @@ export const getAllQuestsByType = async (type: Quest["type"]) => {
 export const addQuestToDB = async (questId: string, quest = {}) => {
   const questRef = doc(db, "quest", questId);
   await setDoc(questRef, quest);
+  console.log(`Added quest with id ${questId}`);
 };

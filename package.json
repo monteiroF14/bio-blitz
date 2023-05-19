@@ -37,6 +37,8 @@
     "tozod": "^3.0.0",
     "use-places-autocomplete": "^4.0.0",
     "uuid": "^9.0.0",
+    "uuidv4": "^6.2.13",
+    "vercel": "^29.3.4",
     "zod": "^3.21.4"
   },
   "devDependencies": {

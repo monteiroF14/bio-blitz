@@ -1,0 +1,16 @@
+{
+  "functions": {
+    "api/functions/generateBattlePass": {
+      "schedule": "0 0 1 * *"
+    },
+    "api/functions/generateDailyQuests": {
+      "schedule": "0 0 * * *"
+    },
+    "api/functions/generateWeeklyQuests": {
+      "schedule": "0 0 1 * *"
+    },
+    "api/functions/generateMonthlyQuests": {
+      "schedule": "0 0 1 * *"
+    }
+  }
+}
