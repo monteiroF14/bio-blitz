@@ -1,20 +1,7 @@
 {
-  "routes": [{ "src": "/api/cron", "dest": "/api/cronHandler" }],
   "crons": [
     {
-      "src": "/api/cronHandler?path=generateBattlePass",
-      "schedule": "0 0 1 * *"
-    },
-    {
-      "src": "/api/cronHandler?path=generateDailyQuests",
-      "schedule": "0 0 * * *"
-    },
-    {
-      "src": "/api/cronHandler?path=generateWeeklyQuests",
-      "schedule": "0 0 1 * *"
-    },
-    {
-      "src": "/api/cronHandler?path=generateMonthlyQuests",
+      "path": "/api/functions/generateBattlePass",
       "schedule": "0 0 1 * *"
     }
   ]
