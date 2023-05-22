@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { env } from "~/env.mjs";
 import { addQuestToDB } from "~/server/db/questUtils";
 import { generateQuests } from "~/server/utils/quest/generateQuests";
 
@@ -10,13 +9,6 @@ async function generateWeeklyQuests(
   response: NextApiResponse
 ) {
   try {
-    const tokenFromRequest = request.headers.authorization;
-
-    if (tokenFromRequest !== env.CRON_TOKEN) {
-      response.status(401).json({ error: "Unauthorized" });
-      return;
-    }
-
     const generatedQuests = generateQuests(WEEKLY_QUESTS_COUNT, "weekly");
     const addQuestPromises = generatedQuests.map((quest) =>
       addQuestToDB(quest.questId, quest)
