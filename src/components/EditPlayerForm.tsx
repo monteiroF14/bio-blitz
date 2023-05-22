@@ -40,7 +40,7 @@ const EditPlayerForm = ({ player }: { player: Player }) => {
     editPlayerSchoolAndLocation.mutate({
       location: selectedLocation as string,
       school: selectedSchool as string,
-      uid: player.email,
+      uid: hashEmail(player.email),
     });
   };
 

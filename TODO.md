@@ -2,7 +2,6 @@
 
 ## Backend
 
-- Make the cloud functions work
 - make admin section
 
 ## UI
@@ -11,7 +10,6 @@
 
 ## Player
 
-- continue creating wallet functions
 - fetch schools from places API
 
 ## Session
@@ -32,7 +30,7 @@
 ## Rewards
 
 - random title 5, 10, 25 lvl, last should have a 2x multiplier
-- at 10 lvl: 1€, 2€ & 5€ -> carteira e dps o user escolhe o montante para gerar qr em pdf
+- make so player can withdraw € using qrcode as pdf
 
 ## Battle Pass
 

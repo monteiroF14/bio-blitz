@@ -38,12 +38,17 @@ const Header = () => {
   useEffect(() => {
     if (getPlayerQuery.isLoading) return;
 
-    if (sessionData && sessionData.user.email && !getPlayerQuery.isSuccess) {
+    if (
+      sessionData &&
+      sessionData.user.email &&
+      !getPlayerQuery.isSuccess &&
+      !getPlayerQuery.isLoading
+    ) {
       const { name, email, image } = sessionData.user;
       const newPlayer = new Player(name, email, image);
       addPlayerMutation.mutate({ uid: hashEmail(email), player: newPlayer });
     }
-  }, [sessionData, addPlayerMutation, getPlayerQuery]);
+  }, [sessionData, addPlayerMutation, getPlayerQuery.isLoading]);
 
   return (
     <header className="flex items-center gap-8 px-12 py-6 dark:bg-gray-900">

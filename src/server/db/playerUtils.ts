@@ -83,9 +83,17 @@ export const updatePlayerFeedback = async (uid: string, feedback: Feedback) => {
 export const updatePlayerTitle = async (uid: string, title: string) => {
   const playerRef = doc(db, "players", uid);
   await updateDoc(playerRef, {
-    activeTitle: title,
+    "playerData.activeTitle": title,
   });
   console.log(`Added feedback to player with id ${uid}.`);
+};
+
+const addPlayerTitle = async (uid: string, title: string) => {
+  const playerRef = doc(db, "players", uid);
+  await updateDoc(playerRef, {
+    "playerData.titles": arrayUnion(title),
+  });
+  console.log(`Added title to player with id ${uid}.`);
 };
 
 export const updatePlayerWallet = async (uid: string, amount: number) => {
@@ -200,13 +208,22 @@ const getRewardFromBP = (level: number, battlePass: BattlePass): Item => {
 
 const addRewardToDB = async (uid: string, reward: Item) => {
   const playerRef = doc(db, "players", uid);
-  if (reward.type !== "money") {
-    await updateDoc(playerRef, {
-      rewards: arrayUnion(reward),
-    });
-    console.log(`Added reward to player.`);
-  } else if (reward.amount) {
-    await updatePlayerWallet(uid, reward.amount);
+  switch (reward.type) {
+    case "money": {
+      if (reward.amount) await updatePlayerWallet(uid, reward.amount);
+      break;
+    }
+    case "title": {
+      await addPlayerTitle(uid, reward.name);
+      break;
+    }
+    default:
+      {
+        await updateDoc(playerRef, {
+          rewards: arrayUnion(reward),
+        });
+      }
+      console.log(`Added reward to player.`);
   }
 };
 
