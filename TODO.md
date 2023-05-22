@@ -30,8 +30,3 @@
 ## Rewards
 
 - random title 5, 10, 25 lvl, last should have a 2x multiplier
-- make so player can withdraw € using qrcode as pdf
-
-## Battle Pass
-
-- make sure battle pass can't be leveled up when it's at last level

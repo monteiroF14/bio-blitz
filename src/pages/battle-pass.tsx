@@ -1,6 +1,5 @@
 import { getSession } from "next-auth/react";
 import Head from "next/head";
-import { api } from "~/utils/api";
 import { hashEmail } from "~/components/Header";
 import { GetServerSidePropsContext } from "next";
 import { createServerSideHelpers } from "@trpc/react-query/server";
@@ -8,23 +7,12 @@ import { playerRouter } from "~/server/api/routers/playerRouter";
 
 const BattlePass = ({
   playerBattlePassData,
-  uid,
 }: {
   playerBattlePassData: {
     currentXP: number;
     currentLevel: number;
   };
-  uid: string;
 }) => {
-  const increasePlayerXPMutation = api.player.increasePlayerXP.useMutation();
-
-  const handleIncreaseXP = () => {
-    increasePlayerXPMutation.mutate({
-      uid: uid,
-      XP: 3000,
-    });
-  };
-
   return (
     <>
       <Head>
@@ -40,12 +28,6 @@ const BattlePass = ({
             <p className="text-base font-bold text-gray-300">
               Current XP: {playerBattlePassData.currentXP}
             </p>
-            <button
-              className="w-fit rounded-lg bg-blue-700 p-2.5 px-12 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              onClick={handleIncreaseXP}
-            >
-              Increase XP
-            </button>
           </section>
         </section>
       </main>
@@ -70,7 +52,6 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   return {
     props: {
       playerBattlePassData,
-      uid,
     },
   };
 };
