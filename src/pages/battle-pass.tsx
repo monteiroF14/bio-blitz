@@ -1,10 +1,8 @@
-import { useSession, getSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
 import Head from "next/head";
-import { api } from "~/utils/api";
 import { hashEmail } from "~/components/Header";
 import { GetServerSidePropsContext } from "next";
 import { createServerSideHelpers } from "@trpc/react-query/server";
-import { battlePassRouter } from "~/server/api/routers/battlePassRouter";
 import { playerRouter } from "~/server/api/routers/playerRouter";
 
 const BattlePass = ({
@@ -15,20 +13,6 @@ const BattlePass = ({
     currentLevel: number;
   };
 }) => {
-  const { data: sessionData } = useSession();
-  const email = sessionData?.user?.email
-    ? hashEmail(sessionData.user.email)
-    : "";
-
-  const increasePlayerXPMutation = api.player.increasePlayerXP.useMutation();
-
-  const handleIncreaseXP = () => {
-    increasePlayerXPMutation.mutate({
-      uid: email,
-      XP: 3000,
-    });
-  };
-
   return (
     <>
       <Head>
@@ -44,12 +28,6 @@ const BattlePass = ({
             <p className="text-base font-bold text-gray-300">
               Current XP: {playerBattlePassData.currentXP}
             </p>
-            <button
-              className="w-fit rounded-lg bg-blue-700 p-2.5 px-12 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              onClick={handleIncreaseXP}
-            >
-              Increase XP
-            </button>
           </section>
         </section>
       </main>
@@ -61,26 +39,18 @@ export default BattlePass;
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const session = await getSession(ctx);
-  const email = session?.user?.email ? hashEmail(session.user.email) : "";
-
-  const battlePassData = createServerSideHelpers({
-    router: battlePassRouter,
-    ctx: {},
-  });
+  const uid = session?.user?.email ? hashEmail(session.user.email) : "";
 
   const playerData = createServerSideHelpers({
     router: playerRouter,
     ctx: {},
   });
 
-  const battlePass = await battlePassData.getBattlePassFromDB.fetch();
-  const playerBattlePassData = await playerData.getPlayerFromDB
-    .fetch(email)
-    .then((player) => player?.battlePassData);
+  const player = await playerData.getPlayerFromDB.fetch(uid);
+  const playerBattlePassData = player?.battlePassData || null;
 
   return {
     props: {
-      battlePass,
       playerBattlePassData,
     },
   };

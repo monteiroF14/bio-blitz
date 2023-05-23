@@ -4,6 +4,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import Player from "~/server/utils/player/PlayerClass";
 import crypto from "crypto";
+import Wallet from "./Wallet";
 
 export const hashEmail = (email: string) => {
   const hash = crypto.createHash("sha256");
@@ -62,12 +63,6 @@ const Header = () => {
         <LinkHeader text="Contact Us" url="contact-us" />
         <LinkHeader text="Profile" url="profile" />
       </nav>
-
-      {sessionData && (
-        <p className="block dark:border-gray-700 dark:text-white ">
-          {getPlayerQuery.data?.wallet}€
-        </p>
-      )}
       <button
         className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
         onClick={sessionData ? () => void signOut() : () => void signIn()}
