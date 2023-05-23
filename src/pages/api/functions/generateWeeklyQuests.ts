@@ -1,7 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { env } from "~/env.mjs";
-import { addQuestToDB } from "~/server/db/questUtils";
+import { getAllPlayersFromDB } from "~/server/db/playerUtils";
+import {
+  addQuestToDB,
+  deleteQuestFromDB,
+  getAllQuestsByType,
+} from "~/server/db/questUtils";
 import { generateQuests } from "~/server/utils/quest/generateQuests";
+import { QuestWithPlayer } from "./generateDailyQuests";
+import { hashEmail } from "~/components/Header";
 
 const WEEKLY_QUESTS_COUNT = 6;
 
@@ -10,14 +16,23 @@ async function generateWeeklyQuests(
   response: NextApiResponse
 ) {
   try {
-    const tokenFromRequest = request.headers.authorization;
+    await getAllQuestsByType("weekly").then((allWeeklyQuests) => {
+      const deleteQuestsPromises = allWeeklyQuests.map((quest) =>
+        deleteQuestFromDB(quest.questId)
+      );
 
-    if (tokenFromRequest !== env.CRON_TOKEN) {
-      response.status(401).json({ error: "Unauthorized" });
-      return;
-    }
+      return Promise.all(deleteQuestsPromises);
+    });
 
-    const generatedQuests = generateQuests(WEEKLY_QUESTS_COUNT, "weekly");
+    const allPlayers = await getAllPlayersFromDB();
+
+    const generatedQuests: QuestWithPlayer[] = allPlayers.flatMap((player) =>
+      generateQuests(WEEKLY_QUESTS_COUNT, "weekly").map((quest) => ({
+        playerId: hashEmail(player.email),
+        ...quest,
+      }))
+    );
+
     const addQuestPromises = generatedQuests.map((quest) =>
       addQuestToDB(quest.questId, quest)
     );

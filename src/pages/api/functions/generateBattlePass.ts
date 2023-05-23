@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { env } from "~/env.mjs";
 import {
   addBattlePassToDB,
   getBattlePassFromDB,
@@ -15,13 +14,6 @@ async function generateBattlePass(
   response: NextApiResponse
 ) {
   try {
-    const tokenFromRequest = request.headers.authorization;
-
-    if (tokenFromRequest !== env.CRON_TOKEN) {
-      response.status(401).json({ error: "Unauthorized" });
-      return;
-    }
-
     const [battlePass, allItemsFromDB] = await Promise.all([
       getBattlePassFromDB(),
       getAllItemsFromDB(),

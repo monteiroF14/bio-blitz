@@ -1,5 +1,6 @@
 import {
   collection,
+  deleteDoc,
   doc,
   getDocs,
   query,
@@ -13,11 +14,17 @@ export const getAllQuestsByType = async (type: Quest["type"]) => {
   const questsSnapshot = await getDocs(
     query(collection(db, "quests"), where("type", "==", type))
   );
-  return questsSnapshot.docs.map((doc) => doc.data());
+  return questsSnapshot.docs.map((doc) => doc.data()) as Quest[];
 };
 
 export const addQuestToDB = async (questId: string, quest = {}) => {
   const questRef = doc(db, "quest", questId);
   await setDoc(questRef, quest);
   console.log(`Added quest with id ${questId}`);
+};
+
+export const deleteQuestFromDB = async (questId: string) => {
+  const questRef = doc(db, "quest", questId);
+  await deleteDoc(questRef);
+  console.log(`Deleted quest with id ${questId}`);
 };

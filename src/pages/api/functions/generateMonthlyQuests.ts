@@ -1,7 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { env } from "~/env.mjs";
-import { addQuestToDB } from "~/server/db/questUtils";
+import {
+  addQuestToDB,
+  deleteQuestFromDB,
+  getAllQuestsByType,
+} from "~/server/db/questUtils";
 import { generateQuests } from "~/server/utils/quest/generateQuests";
+import { QuestWithPlayer } from "./generateDailyQuests";
+import { getAllPlayersFromDB } from "~/server/db/playerUtils";
+import { hashEmail } from "~/components/Header";
 
 const MONTHLY_QUESTS_COUNT = 3;
 
@@ -10,14 +16,23 @@ async function generateMonthlyQuests(
   response: NextApiResponse
 ) {
   try {
-    const tokenFromRequest = request.headers.authorization;
+    await getAllQuestsByType("monthly").then((allMonthlyQuests) => {
+      const deleteQuestsPromises = allMonthlyQuests.map((quest) =>
+        deleteQuestFromDB(quest.questId)
+      );
 
-    if (tokenFromRequest !== env.CRON_TOKEN) {
-      response.status(401).json({ error: "Unauthorized" });
-      return;
-    }
+      return Promise.all(deleteQuestsPromises);
+    });
 
-    const generatedQuests = generateQuests(MONTHLY_QUESTS_COUNT, "monthly");
+    const allPlayers = await getAllPlayersFromDB();
+
+    const generatedQuests: QuestWithPlayer[] = allPlayers.flatMap((player) =>
+      generateQuests(MONTHLY_QUESTS_COUNT, "monthly").map((quest) => ({
+        playerId: hashEmail(player.email),
+        ...quest,
+      }))
+    );
+
     const addQuestPromises = generatedQuests.map((quest) =>
       addQuestToDB(quest.questId, quest)
     );
@@ -27,7 +42,7 @@ async function generateMonthlyQuests(
         body: generatedQuests,
         query: request.query,
         cookies: request.cookies,
-        message: "New daily quest created!",
+        message: "New monthly quest created!",
       });
     });
   } catch (error) {
