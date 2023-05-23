@@ -49,7 +49,7 @@ const Header = () => {
       const newPlayer = new Player(name, email, image);
       addPlayerMutation.mutate({ uid: hashEmail(email), player: newPlayer });
     }
-  }, [sessionData, addPlayerMutation, getPlayerQuery.isLoading]);
+  }, [sessionData, getPlayerQuery.isLoading]);
 
   return (
     <header className="flex items-center gap-8 px-12 py-6 dark:bg-gray-900">

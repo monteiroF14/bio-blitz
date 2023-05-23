@@ -41,6 +41,15 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const session = await getSession(ctx);
   const uid = session?.user?.email ? hashEmail(session.user.email) : "";
 
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/api/auth/signin",
+        permanent: false,
+      },
+    };
+  }
+
   const playerData = createServerSideHelpers({
     router: playerRouter,
     ctx: {},
