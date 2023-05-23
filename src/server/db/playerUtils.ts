@@ -115,7 +115,7 @@ export const increaseXP = async (uid: string, XP: number) => {
     }
 
     const { playerData, battlePassData } = player;
-    // XP = addXpBoostBasedOnTitle(playerData?.activeTitle, XP);
+    XP *= playerData.xpMultiplier;
 
     const { requiredXP: battlePassRequiredXP } = battlePass.tiers.find(
       (tier) => tier.tier === playerData?.currentLevel
@@ -140,7 +140,7 @@ export const increaseXP = async (uid: string, XP: number) => {
         battlePass
       );
 
-      await addRewardToDB(uid, rewardFromBP);
+      await addRewardToDB(uid, rewardFromBP, player);
     } else if (!isAtLastLevel) {
       battlePassData.currentXP += XP;
     }
@@ -164,7 +164,7 @@ export const increaseXP = async (uid: string, XP: number) => {
             if (levelRewards.length) {
               await Promise.all(
                 levelRewards.map(async (reward) => {
-                  await addRewardToDB(uid, reward);
+                  await addRewardToDB(uid, reward, player);
                 })
               );
             } else {
@@ -206,7 +206,7 @@ const getRewardFromBP = (level: number, battlePass: BattlePass): Item => {
   return selectedLevel?.reward as Item;
 };
 
-const addRewardToDB = async (uid: string, reward: Item) => {
+const addRewardToDB = async (uid: string, reward: Item, player: Player) => {
   const playerRef = doc(db, "players", uid);
   switch (reward.type) {
     case "money": {
@@ -214,6 +214,13 @@ const addRewardToDB = async (uid: string, reward: Item) => {
       break;
     }
     case "title": {
+      if (
+        reward.multiplier &&
+        player.playerData.xpMultiplier <= reward.multiplier
+      ) {
+        await updatePlayerXpMultiplier(uid, reward.multiplier);
+      }
+
       await addPlayerTitle(uid, reward.name);
       break;
     }
@@ -236,5 +243,12 @@ const updatePlayerGameData = async (
   await updateDoc(playerRef, {
     playerData: playerData,
     battlePassData: battlePassData,
+  });
+};
+
+const updatePlayerXpMultiplier = async (uid: string, xpMultiplier: number) => {
+  const playerRef = doc(db, "players", uid);
+  await updateDoc(playerRef, {
+    "playerData.xpMultiplier": xpMultiplier,
   });
 };

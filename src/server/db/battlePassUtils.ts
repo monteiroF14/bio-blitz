@@ -17,7 +17,7 @@ export const BattlePassSchema = z.object({
     z.object({
       tier: z.number().min(1).max(MAX_BP_LEVEL),
       requiredXP: z.number().nonnegative(),
-      reward: ItemSchema,
+      reward: z.optional(ItemSchema),
     })
   ),
   expiringAt: z.union([z.date(), z.string()]),

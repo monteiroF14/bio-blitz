@@ -4,7 +4,7 @@ export class BattlePass {
   readonly tiers: {
     tier: number;
     requiredXP: number;
-    reward: Item;
+    reward: Item | undefined;
   }[];
   readonly expiringAt: Date | string;
 
@@ -12,11 +12,26 @@ export class BattlePass {
     this.tiers = Array.from({ length: maxLevel }, (_, i) => {
       const tierIndex = ++i;
 
+      const getItemMultiplier = items.filter((item) => item?.multiplier);
+
+      const chooseItemWithMultiplier = (
+        idx: number,
+        itemsWithMultiplier: Item[]
+      ) => {
+        const index = idx + 1;
+
+        return index === 15
+          ? itemsWithMultiplier.find((item) => item.multiplier === 1.5)
+          : index === 25
+          ? itemsWithMultiplier.find((item) => item.multiplier === 2)
+          : itemsWithMultiplier.find((item) => item.multiplier === 1);
+      };
+
       const reward =
         tierIndex % 10 === 0
           ? this.getItemByType(items, "money")
           : tierIndex % 5 === 0 && tierIndex >= 5
-          ? this.getItemByType(items, "title")
+          ? chooseItemWithMultiplier(tierIndex, getItemMultiplier)
           : tierIndex % 3 === 0
           ? this.getItemByType(items, "font")
           : Math.random() < 0.5
