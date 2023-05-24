@@ -252,3 +252,40 @@ const updatePlayerXpMultiplier = async (uid: string, xpMultiplier: number) => {
     "playerData.xpMultiplier": xpMultiplier,
   });
 };
+
+interface School {
+  business_status: string;
+  name: string;
+  rating: number;
+  place_id: string;
+}
+
+interface PlacesResponse {
+  results: {
+    business_status: string;
+    name: string;
+    rating: number;
+    place_id: string;
+  }[];
+}
+
+export const getSchoolsByLocation = async (API_URL: string) => {
+  try {
+    const res = await fetch(API_URL);
+    if (!res.ok) {
+      throw new Error("Request failed");
+    }
+    const data: PlacesResponse = await res.json();
+    return (
+      (data.results?.map((result) => ({
+        business_status: result.business_status,
+        name: result.name,
+        rating: result.rating,
+        place_id: result.place_id,
+      })) as School[]) || []
+    );
+  } catch (error) {
+    console.error("Error fetching schools:", error);
+    return [];
+  }
+};

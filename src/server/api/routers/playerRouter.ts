@@ -4,6 +4,7 @@ import {
   addPlayerToDB,
   getAllPlayersFromDB,
   getPlayerFromDB,
+  getSchoolsByLocation,
   increaseXP,
   updatePlayerFeedback,
   updatePlayerSchoolAndLocation,
@@ -90,5 +91,11 @@ export const playerRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       await increaseXP(input.uid, input.XP);
       console.log(`Increased ${input.XP} XP`);
+    }),
+  getSchoolsByLocation: publicProcedure
+    .input(z.string())
+    .query(async ({ input }) => {
+      const schools = await getSchoolsByLocation(input);
+      console.log("schools: ", schools);
     }),
 });

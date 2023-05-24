@@ -6,8 +6,10 @@ import {
   ComboboxList,
   ComboboxOption,
 } from "@reach/combobox";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import "@reach/combobox/styles.css";
+import { env } from "~/env.mjs";
+import { api } from "~/utils/api";
 
 const AutoCompleteForm = () => {
   const [location, setLocation] = useState("");
@@ -15,7 +17,7 @@ const AutoCompleteForm = () => {
   return (
     <>
       <LocationInput setLocation={setLocation} />
-      <SchoolInput selectedLocation={location} />
+      <SchoolInput />
     </>
   );
 };
@@ -75,12 +77,14 @@ const LocationInput = ({
   );
 };
 
-const SchoolInput = ({ selectedLocation }: { selectedLocation: string }) => {
-  const request = {
-    location: selectedLocation,
-    radius: 500,
-    type: ["secondary_school"],
+const SchoolInput = () => {
+  const options = {
+    key: env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
   };
+
+  const API_URL = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?query=school&key=${options.key}`;
+
+  const schoolsQuery = api.player.getSchoolsByLocation.useQuery(API_URL);
 
   return (
     <section>
