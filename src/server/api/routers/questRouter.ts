@@ -1,17 +1,23 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { addQuestToDB, getAllQuestsByType } from "~/server/db/questUtils";
+import {
+  addQuestToDB,
+  getAllQuestsByType,
+  getAllQuestsByTypeFromPlayer,
+} from "~/server/db/questUtils";
 import QuestSchema from "~/server/db/QuestSchema";
+
+const questTypeSchema = z.union([
+  z.literal("daily"),
+  z.literal("weekly"),
+  z.literal("monthly"),
+]);
 
 export const questRouter = createTRPCRouter({
   getAllQuestByType: publicProcedure
     .input(
       z.object({
-        type: z.union([
-          z.literal("daily"),
-          z.literal("weekly"),
-          z.literal("monthly"),
-        ]),
+        type: questTypeSchema,
       })
     )
     .query(async ({ input }) => {
@@ -22,4 +28,15 @@ export const questRouter = createTRPCRouter({
     const addedQuest = await addQuestToDB(input.questId, input);
     return addedQuest;
   }),
+  getAllQuestsByTypeFromPlayer: publicProcedure
+    .input(
+      z.object({
+        uid: z.string(),
+        type: questTypeSchema,
+      })
+    )
+    .query(async ({ input: { uid, type } }) => {
+      const questsFromPlayer = await getAllQuestsByTypeFromPlayer(uid, type);
+      return questsFromPlayer;
+    }),
 });

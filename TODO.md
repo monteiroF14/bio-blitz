@@ -4,10 +4,6 @@
 
 - make admin section
 
-## UI
-
-- Think of the logic to make UI skins
-
 ## Player
 
 - fetch schools from places API
@@ -21,7 +17,3 @@
   - If the user didn't do the quest simply show something in the UI that demonstrates
 
 - Logic to increase the quest frequency (?)
-
-## Rewards
-
-- random title 5, 10, 25 lvl, last should have a 2x multiplier

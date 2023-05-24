@@ -28,3 +28,17 @@ export const deleteQuestFromDB = async (questId: string) => {
   await deleteDoc(questRef);
   console.log(`Deleted quest with id ${questId}`);
 };
+
+export const getAllQuestsByTypeFromPlayer = async (
+  uid: string,
+  type: Quest["type"]
+) => {
+  const questsSnapshot = await getDocs(
+    query(
+      collection(db, "quests"),
+      where("playerId", "==", uid),
+      where("type", "==", type)
+    )
+  );
+  return questsSnapshot.docs.map((doc) => doc.data()) as Quest[];
+};
