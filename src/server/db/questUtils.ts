@@ -3,7 +3,9 @@ import {
   deleteDoc,
   doc,
   getDocs,
+  increment,
   query,
+  runTransaction,
   setDoc,
   where,
 } from "firebase/firestore";
@@ -41,4 +43,21 @@ export const getAllQuestsByTypeFromPlayer = async (
     )
   );
   return questsSnapshot.docs.map((doc) => doc.data()) as Quest[];
+};
+
+export const increaseQuestFrequency = async (questId: string) => {
+  const questRef = doc(db, "quests", questId);
+  await runTransaction(db, async (transaction) => {
+    const questDoc = await transaction.get(questRef);
+
+    if (questDoc.exists()) {
+      const currentFrequency = (questDoc.data()?.frequency as number) || 0;
+
+      if (currentFrequency < 3) {
+        transaction.update(questRef, {
+          frequency: increment(1),
+        });
+      }
+    }
+  });
 };
