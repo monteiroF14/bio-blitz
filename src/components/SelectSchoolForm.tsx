@@ -1,7 +1,7 @@
 import { env } from "~/env.mjs";
 import { api } from "~/utils/api";
 
-const AutoCompleteForm = () => {
+const SelectSchoolForm = () => {
   const options = {
     key: env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     query: "school",
@@ -38,4 +38,4 @@ const AutoCompleteForm = () => {
   );
 };
 
-export default AutoCompleteForm;
+export default SelectSchoolForm;

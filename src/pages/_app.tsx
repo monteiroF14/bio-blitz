@@ -16,8 +16,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <SessionProvider session={session}>
       <Head>
         <title>bioBlitz</title>
-        <meta name="description" content="bioBlitz - " />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
       <Component {...pageProps} />
