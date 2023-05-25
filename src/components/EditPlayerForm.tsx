@@ -1,21 +1,15 @@
-import { LoadScriptProps, useJsApiLoader } from "@react-google-maps/api";
-import { env } from "~/env.mjs";
-import Loading from "./Loading";
 import SelectPlayerTitleForm from "./SelectPlayerTitleForm";
 import AutoCompleteForm from "./AutoCompleteForm";
 import Player from "~/server/utils/player/PlayerClass";
 import { api } from "~/utils/api";
 import { hashEmail } from "./Header";
 
-const libraries: LoadScriptProps["libraries"] = ["places"];
-
 type EditProfileData = {
   [key: string]: string | File;
 };
 
 const EditPlayerForm = ({ player }: { player: Player }) => {
-  const editPlayerSchoolAndLocation =
-    api.player.updatePlayerSchoolAndLocation.useMutation();
+  const editPlayerSchool = api.player.updatePlayerSchool.useMutation();
   const editPlayerTitle = api.player.updatePlayerTitle.useMutation();
 
   const handleEditProfileFormSubmit = (evt: React.FormEvent) => {
@@ -26,31 +20,19 @@ const EditPlayerForm = ({ player }: { player: Player }) => {
       formData.entries()
     ) as EditProfileData;
 
-    const {
-      playerTitleCombo: selectedTitle,
-      locationInput: selectedLocation,
-      schoolsInput: selectedSchool,
-    } = editProfileData;
+    const { playerTitleCombo: selectedTitle, schoolsInput: selectedSchool } =
+      editProfileData;
 
     editPlayerTitle.mutate({
       uid: hashEmail(player.email),
       title: selectedTitle as string,
     });
 
-    editPlayerSchoolAndLocation.mutate({
-      location: selectedLocation as string,
+    editPlayerSchool.mutate({
       school: selectedSchool as string,
       uid: hashEmail(player.email),
     });
   };
-
-  const { isLoaded } = useJsApiLoader({
-    id: "google-map-script",
-    googleMapsApiKey: env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
-    libraries,
-  });
-
-  if (!isLoaded) return <Loading />;
 
   return (
     <form className=" w-full space-y-8" onSubmit={handleEditProfileFormSubmit}>

@@ -4,12 +4,12 @@ import {
   addPlayerToDB,
   getAllPlayersFromDB,
   getPlayerFromDB,
-  getSchoolsByLocation,
+  fetchSchools,
   increaseXP,
   updatePlayerFeedback,
-  updatePlayerSchoolAndLocation,
   updatePlayerTitle,
   updatePlayerWallet,
+  updatePlayerSchool,
 } from "~/server/db/playerUtils";
 import PlayerSchema, { FeedbackSchema } from "~/server/db/PlayerSchema";
 
@@ -35,20 +35,15 @@ export const playerRouter = createTRPCRouter({
       const player = await addPlayerToDB(input.uid, input.player);
       return player;
     }),
-  updatePlayerSchoolAndLocation: publicProcedure
+  updatePlayerSchool: publicProcedure
     .input(
       z.object({
         uid: z.string(),
-        location: z.string(),
         school: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
-      await updatePlayerSchoolAndLocation(
-        input.uid,
-        input.location,
-        input.school
-      );
+    .mutation(async ({ input: { uid, school } }) => {
+      await updatePlayerSchool(uid, school);
     }),
   updatePlayerTitle: publicProcedure
     .input(
@@ -92,10 +87,14 @@ export const playerRouter = createTRPCRouter({
       await increaseXP(input.uid, input.XP);
       console.log(`Increased ${input.XP} XP`);
     }),
-  getSchoolsByLocation: publicProcedure
-    .input(z.string())
-    .query(async ({ input }) => {
-      const schools = await getSchoolsByLocation(input);
-      console.log("schools: ", schools);
+  fetchSchools: publicProcedure
+    .input(
+      z.object({
+        url: z.string(),
+      })
+    )
+    .query(async ({ input: { url } }) => {
+      const schools = await fetchSchools(url);
+      return schools;
     }),
 });

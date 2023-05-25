@@ -17,7 +17,6 @@ export default class Player {
   name: string;
   email: string;
   image: string;
-  location: string | null;
   school: string | null;
   battlePassData: {
     currentXP: number;
@@ -44,7 +43,6 @@ export default class Player {
     this.email = email;
     this.image = image;
     this.school = null;
-    this.location = null;
     this.battlePassData = {
       currentXP: START_XP,
       currentLevel: START_LEVEL,

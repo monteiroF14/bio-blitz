@@ -11,7 +11,6 @@ const PlayerSchema = z.object({
   name: z.string(),
   email: z.string(),
   image: z.string(),
-  location: z.string().nullable(),
   school: z.string().nullable(),
   battlePassData: z.object({
     currentXP: z.number(),

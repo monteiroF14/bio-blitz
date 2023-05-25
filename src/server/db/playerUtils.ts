@@ -50,23 +50,16 @@ export const addPlayerToDB = async (uid: string, player: Player) => {
   }
 };
 
-export const updatePlayerSchoolAndLocation = async (
-  uid: string,
-  location: string,
-  school: string
-) => {
+export const updatePlayerSchool = async (uid: string, school: string) => {
   try {
     const playerRef = doc(db, "players", uid);
     await updateDoc(playerRef, {
-      location: location,
       school: school,
     });
-    console.log(
-      `Added location ${location} and school ${school} to player with id ${uid}.`
-    );
+    console.log(`Added school ${school} to player with id ${uid}.`);
   } catch (error) {
     console.error(
-      `Error adding location ${location} and school ${school} to player with id ${uid}: `,
+      `Error adding school ${school} to player with id ${uid}: `,
       error
     );
   }
@@ -260,30 +253,41 @@ interface School {
   place_id: string;
 }
 
-interface PlacesResponse {
-  results: {
-    business_status: string;
-    name: string;
-    rating: number;
-    place_id: string;
-  }[];
+interface Result {
+  business_status: string;
+  name: string;
+  rating: number;
+  place_id: string;
 }
 
-export const getSchoolsByLocation = async (API_URL: string) => {
+interface PlacesResponse {
+  results?: Result[];
+}
+
+export const fetchSchools = async (API_URL: string) => {
   try {
-    const res = await fetch(API_URL);
-    if (!res.ok) {
+    const placesResponse = await fetch(API_URL);
+
+    if (!placesResponse.ok) {
       throw new Error("Request failed");
     }
-    const data: PlacesResponse = await res.json();
-    return (
-      (data.results?.map((result) => ({
-        business_status: result.business_status,
-        name: result.name,
-        rating: result.rating,
-        place_id: result.place_id,
-      })) as School[]) || []
-    );
+
+    const data = (await placesResponse.json()) as PlacesResponse;
+
+    const schools: School[] =
+      data.results
+        ?.map((result: Result) => ({
+          business_status: result.business_status,
+          name: result.name,
+          rating: result.rating,
+          place_id: result.place_id,
+        }))
+        .filter(
+          ({ rating, business_status }) =>
+            rating >= 2 && business_status === "OPERATIONAL"
+        ) || [];
+
+    return schools;
   } catch (error) {
     console.error("Error fetching schools:", error);
     return [];

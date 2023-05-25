@@ -4,10 +4,6 @@
 
 - make admin section
 
-## Player
-
-- fetch schools from places API
-
 ## Quests
 
 - How does the user submit the quest?
