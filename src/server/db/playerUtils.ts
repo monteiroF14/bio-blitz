@@ -218,11 +218,9 @@ const addRewardToDB = async (uid: string, reward: Item, player: Player) => {
       break;
     }
     default:
-      {
-        await updateDoc(playerRef, {
-          rewards: arrayUnion(reward),
-        });
-      }
+      await updateDoc(playerRef, {
+        rewards: arrayUnion(reward),
+      });
       console.log(`Added reward to player.`);
   }
 };
@@ -246,14 +244,7 @@ const updatePlayerXpMultiplier = async (uid: string, xpMultiplier: number) => {
   });
 };
 
-interface School {
-  business_status: string;
-  name: string;
-  rating: number;
-  place_id: string;
-}
-
-interface Result {
+export interface School {
   business_status: string;
   name: string;
   rating: number;
@@ -261,7 +252,7 @@ interface Result {
 }
 
 interface PlacesResponse {
-  results?: Result[];
+  results?: School[];
 }
 
 export const fetchSchools = async (API_URL: string) => {
@@ -276,7 +267,7 @@ export const fetchSchools = async (API_URL: string) => {
 
     const schools: School[] =
       data.results
-        ?.map((result: Result) => ({
+        ?.map((result: School) => ({
           business_status: result.business_status,
           name: result.name,
           rating: result.rating,

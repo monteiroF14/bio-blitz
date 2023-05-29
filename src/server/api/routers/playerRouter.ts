@@ -21,8 +21,7 @@ export const playerRouter = createTRPCRouter({
   getPlayerFromDB: publicProcedure
     .input(z.string())
     .query(async ({ input }) => {
-      const player = await getPlayerFromDB(input);
-      return player;
+      return await getPlayerFromDB(input);
     }),
   addPlayerToDB: publicProcedure
     .input(

@@ -3,6 +3,7 @@ import {
   addItemToDB,
   getAllItemsFromCollection,
   getAllItemsFromDB,
+  getCollectionNamesFromAllItems,
   getItemByType,
 } from "~/server/db/itemUtils";
 import { createTRPCRouter, publicProcedure } from "../trpc";
@@ -35,6 +36,13 @@ export const itemRouter = createTRPCRouter({
   getAllItemsFromDB: publicProcedure.query(async () => {
     try {
       return await getAllItemsFromDB();
+    } catch (err) {
+      console.error(err);
+    }
+  }),
+  getCollectionNamesFromAllItems: publicProcedure.query(async () => {
+    try {
+      return await getCollectionNamesFromAllItems();
     } catch (err) {
       console.error(err);
     }

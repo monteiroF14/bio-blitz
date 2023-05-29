@@ -60,11 +60,16 @@ export const addItemToDB = async (item: Item) => {
   }
 };
 
-export const getCollectionNamesFromAllItems = async () => {
+export const getCollectionNamesFromAllItems = async (): Promise<string[]> => {
   try {
     const items = await getAllItemsFromDB();
     const collectionNames = items.map((item) => item.collection);
-    return Array.from(new Set(collectionNames));
+    const uniqueCollectionNames = Array.from(new Set(collectionNames)).filter(
+      (name): name is string => typeof name === "string"
+    );
+    return uniqueCollectionNames.length > 0
+      ? uniqueCollectionNames
+      : ["No collections found!"];
   } catch (error) {
     console.error("Error retrieving collection names from items: ", error);
     return [];

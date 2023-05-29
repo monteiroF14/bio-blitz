@@ -7,13 +7,11 @@ import { getBattlePassFromDB } from "~/server/db/battlePassUtils";
 
 export const battlePassRouter = createTRPCRouter({
   getBattlePassFromDB: publicProcedure.query(() => {
-    const battlePassData = getBattlePassFromDB();
-    return battlePassData;
+    return getBattlePassFromDB();
   }),
   addBattlePassToDB: publicProcedure
     .input(BattlePassSchema)
     .mutation(async ({ input }) => {
-      const addedBattlePass = await addBattlePassToDB(input);
-      return addedBattlePass;
+      await addBattlePassToDB(input);
     }),
 });
