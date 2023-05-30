@@ -2,7 +2,7 @@ import SelectPlayerTitleForm from "./SelectPlayerTitleForm";
 import SelectSchoolForm from "./SelectSchoolForm";
 import Player from "~/server/utils/player/PlayerClass";
 import { api } from "~/utils/api";
-import { hashEmail } from "./Header";
+import { hashEmail } from "../Header";
 
 type EditProfileData = {
   [key: string]: string | File;
