@@ -1,18 +1,36 @@
-import { Item } from "~/server/utils/Item";
 import ItemCard from "../ItemCard";
-import { useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { api } from "~/utils/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import Modal from "react-modal";
+import { Collection } from "~/server/utils/Collection";
 
-function NewCollectionModal() {
+function NewCollectionModal({
+  collectionNames,
+}: {
+  collectionNames: string[];
+}) {
   const [toggleModal, setToggleModal] = useState(false);
   const modalRef = useRef<Modal>(null);
+  const [itemsComponent, setItemsComponent] = useState<React.ReactNode[]>([]);
+
+  const newCollectionMutation = api.collection.addCollectionToDB.useMutation();
 
   const onModalToggle = () => setToggleModal(!toggleModal);
 
-  // write addCollection mutation here and style modal
+  const handleAddAnotherItem = () => {
+    setItemsComponent((prevItems) => [
+      ...prevItems,
+      <ItemCard key={prevItems.length} type="add" />,
+    ]);
+  };
+
+  const handleNewCollectionSubmit = (evt: FormEvent) => {
+    evt.preventDefault();
+
+    //TODO: write addCollection mutation here and style modal
+  };
 
   return (
     <>
@@ -25,56 +43,65 @@ function NewCollectionModal() {
       <Modal
         isOpen={toggleModal}
         onRequestClose={onModalToggle}
-        contentLabel="Terms of Service"
+        contentLabel="New collection"
         overlayClassName="modal-overlay"
         ariaHideApp={false}
         ref={modalRef}
       >
-        <h2 className="mb-4 text-2xl font-bold">Terms of Service</h2>
-        <section>
-          <div className="space-y-6">
-            <div className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              <p>
-                With less than a month to go before the European Union enacts
-                new consumer privacy laws for its citizens, companies around the
-                world are updating their terms of service agreements to comply.
-              </p>
-            </div>
-            <div className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              <p>
-                The European Union’s General Data Protection Regulation
-                (G.D.P.R.) goes into effect on May 25 and is meant to ensure a
-                common set of data rights in the European Union. It requires
-                organizations to notify users as soon as possible of high-risk
-                data breaches that could personally affect them.
-              </p>
-            </div>
-          </div>
-        </section>
-        <footer className="mt-4">
-          <button
-            onClick={onModalToggle}
-            className="rounded bg-gray-300 px-4 py-2 font-bold text-gray-800 hover:bg-gray-400"
-          >
-            Close modal
-          </button>
-        </footer>
+        <h2 className="mb-4 text-2xl font-bold">New collection</h2>
+        <form className="space-y-4" onSubmit={handleNewCollectionSubmit}>
+          <section className="grid gap-4">
+            <section className="space-y-2">
+              <label htmlFor="newCollectionName" className="font-bold ">
+                Collection name:
+              </label>
+              <div className=" grid grid-cols-3 gap-4">
+                <input
+                  type="text"
+                  name="newCollectionName"
+                  id="newCollectionName"
+                  placeholder="new collection name.."
+                  className="text-ellipsis"
+                />
+                <p className="mx-auto">or</p>
+                <select name="itemsSelect" id="itemsSelect">
+                  {collectionNames.map((collectionName, idx) => (
+                    <option key={idx} value={collectionName}>
+                      {collectionName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </section>
+            <section className="space-y-2">
+              <label htmlFor="newItems" className="font-semibold">
+                Items:
+              </label>
+              <section className="grid grid-cols-2 gap-4 lg:grid-cols-3">
+                {itemsComponent.map((item) => item)}
+                <ItemCard type="create" onClick={handleAddAnotherItem} />
+              </section>
+            </section>
+          </section>
+          <footer className="mt-4">
+            <button
+              type="submit"
+              className="mx-auto rounded bg-gray-300 px-4 py-2 font-bold text-gray-800 hover:bg-gray-400"
+            >
+              Submit
+            </button>
+          </footer>
+        </form>
       </Modal>
     </>
   );
 }
 
 function AdminForm({ collectionNames }: { collectionNames: string[] }) {
-  interface Collection {
-    items: Item[];
-    name: string;
-  }
-
-  const [shouldHideGrid, setShouldHideGrid] = useState(true);
   const [collections, setCollections] = useState<Collection[]>([]);
+  const [gridVisibility, setGridVisibility] = useState<boolean[]>([]);
 
   const utils = api.useContext();
-  // const newCollectionMutation = api.collection.addCollectionToDB.useMutation();
 
   useEffect(() => {
     const fetchCollections = async () => {
@@ -84,6 +111,7 @@ function AdminForm({ collectionNames }: { collectionNames: string[] }) {
         const items = await utils.item.getAllItemsFromCollection.fetch(
           collection
         );
+
         newCollections.push({
           items: items || [],
           name: collection,
@@ -91,6 +119,7 @@ function AdminForm({ collectionNames }: { collectionNames: string[] }) {
       }
 
       setCollections(newCollections);
+      setGridVisibility(newCollections.map(() => false));
     };
 
     fetchCollections().catch((error) => {
@@ -98,7 +127,11 @@ function AdminForm({ collectionNames }: { collectionNames: string[] }) {
     });
   }, [collectionNames]);
 
-  const handleShowMoreButton = () => setShouldHideGrid(!shouldHideGrid);
+  const handleShowMoreButton = (index: number) => {
+    const updatedVisibility = [...gridVisibility];
+    updatedVisibility[index] = !updatedVisibility[index];
+    setGridVisibility(updatedVisibility);
+  };
 
   return (
     <>
@@ -108,7 +141,7 @@ function AdminForm({ collectionNames }: { collectionNames: string[] }) {
           <>
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold text-white">All collections</h2>
-              <NewCollectionModal />
+              <NewCollectionModal collectionNames={collectionNames} />
             </div>
             {collections.map((collection, idx) => {
               return (
@@ -119,17 +152,17 @@ function AdminForm({ collectionNames }: { collectionNames: string[] }) {
                   <button
                     className="absolute right-0 top-0 text-2xl font-bold text-white"
                     aria-label="Show more items"
-                    onClick={handleShowMoreButton}
+                    onClick={() => handleShowMoreButton(idx)}
                   >
                     <FontAwesomeIcon icon={faEllipsis} className="px-2 py-1" />
                   </button>
                   <section
                     className={`grid h-24 grid-cols-4 gap-4 transition-all duration-200 ease-in-out ${
-                      !shouldHideGrid ? "h-full" : "h-24 overflow-hidden"
+                      gridVisibility[idx] ? "h-full" : "h-24 overflow-hidden"
                     }`}
                   >
                     {collection.items?.map((item, idx) => (
-                      <ItemCard key={idx} item={item} />
+                      <ItemCard key={idx} item={item} type="show" />
                     ))}
                   </section>
                 </article>

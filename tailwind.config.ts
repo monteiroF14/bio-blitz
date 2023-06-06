@@ -44,6 +44,9 @@ export default {
         montserrat: ["Montserrat"],
         poppins: ["Poppins"],
       },
+      minHeight: {
+        "24": "6rem",
+      },
     },
   },
 } satisfies Config;
