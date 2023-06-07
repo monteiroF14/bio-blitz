@@ -5,6 +5,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import Modal from "react-modal";
 import { Collection } from "~/server/utils/Collection";
+import { Item } from "~/server/utils/Item";
+
+interface INewCollection {
+  newCollectionName: string | undefined;
+  itemsSelect: string | undefined;
+  items: Item[];
+}
 
 function NewCollectionModal({
   collectionNames,
@@ -19,6 +26,11 @@ function NewCollectionModal({
 
   const onModalToggle = () => setToggleModal(!toggleModal);
 
+  const handleCloseModal = () => {
+    onModalToggle();
+    setItemsComponent([]);
+  };
+
   const handleAddAnotherItem = () => {
     setItemsComponent((prevItems) => [
       ...prevItems,
@@ -29,7 +41,18 @@ function NewCollectionModal({
   const handleNewCollectionSubmit = (evt: FormEvent) => {
     evt.preventDefault();
 
-    //TODO: write addCollection mutation here and style modal
+    const formData = new FormData(evt.target as HTMLFormElement);
+    const newCollectionFormData = Object.fromEntries(formData.entries());
+
+    console.log(itemsComponent);
+
+    newCollectionFormData.newCollectionName
+      ? delete newCollectionFormData.itemsSelect
+      : delete newCollectionFormData.newCollectionName;
+
+    console.log("newCollectionFormData: ", newCollectionFormData);
+
+    //TODO: pegar o state do ItemCard e transformar na INewCollection
   };
 
   return (
@@ -49,7 +72,12 @@ function NewCollectionModal({
         ref={modalRef}
       >
         <h2 className="mb-4 text-2xl font-bold">New collection</h2>
-        <form className="space-y-4" onSubmit={handleNewCollectionSubmit}>
+        <form
+          className="space-y-4"
+          onSubmit={handleNewCollectionSubmit}
+          name="newCollectionForm"
+          id="newCollectionForm"
+        >
           <section className="grid gap-4">
             <section className="space-y-2">
               <label htmlFor="newCollectionName" className="font-bold ">
@@ -83,12 +111,18 @@ function NewCollectionModal({
               </section>
             </section>
           </section>
-          <footer className="mt-4">
+          <footer className="flex justify-around">
             <button
               type="submit"
-              className="mx-auto rounded bg-gray-300 px-4 py-2 font-bold text-gray-800 hover:bg-gray-400"
+              className="rounded bg-gray-300 px-4 py-2 font-bold text-gray-800 hover:bg-gray-400"
             >
               Submit
+            </button>
+            <button
+              onClick={handleCloseModal}
+              className="rounded bg-gray-300 px-4 py-2 font-bold text-gray-800 hover:bg-gray-400"
+            >
+              Close modal
             </button>
           </footer>
         </form>
