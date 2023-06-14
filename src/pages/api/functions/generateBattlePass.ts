@@ -3,8 +3,10 @@ import {
   addBattlePassToDB,
   getBattlePassFromDB,
 } from "~/server/db/battlePassUtils";
-import { getAllItemsFromDB } from "~/server/db/itemUtils";
+import { getAllItemsFromCollection } from "~/server/db/collectionUtils";
 import { BattlePass } from "~/server/utils/BattlePass";
+
+const NO_COLLECTION = "no-collection";
 
 const BP_LEVEL_XP = 5000;
 export const MAX_BP_LEVEL = 30;
@@ -16,7 +18,7 @@ async function generateBattlePass(
   try {
     const [battlePass, allItemsFromDB] = await Promise.all([
       getBattlePassFromDB(),
-      getAllItemsFromDB(),
+      getAllItemsFromCollection(NO_COLLECTION),
     ]);
 
     const itemsNotInReward = allItemsFromDB

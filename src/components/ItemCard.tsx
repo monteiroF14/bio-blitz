@@ -104,6 +104,7 @@ const ItemCard = ({
       ) : type === "add" && itemId ? (
         <AddItemCard itemId={itemId} />
       ) : (
+        //TODO: make this show the item and add delete & update to it (use "p" that can be edited)
         item?.name
       )}
     </article>

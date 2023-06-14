@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ItemSchema } from "./itemUtils";
+import { ItemSchema } from "./collectionUtils";
 
 export const FeedbackSchema = z.object({
   description: z.string(),

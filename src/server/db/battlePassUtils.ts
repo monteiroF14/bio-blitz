@@ -9,8 +9,8 @@ import {
   query,
 } from "firebase/firestore";
 import { BattlePass } from "../utils/BattlePass";
-import { ItemSchema } from "./itemUtils";
 import { MAX_BP_LEVEL } from "~/pages/api/functions/generateBattlePass";
+import { ItemSchema } from "./collectionUtils";
 
 export const BattlePassSchema = z.object({
   tiers: z.array(

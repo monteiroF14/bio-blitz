@@ -10,13 +10,14 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebase";
 import Player, { Feedback } from "../utils/player/PlayerClass";
-import { getBattlePassFromDB } from "./battlePassUtils";
+// import { getBattlePassFromDB } from "./battlePassUtils";
 import { BattlePass } from "../utils/BattlePass";
 import { Item } from "../utils/Item";
 import {
   getAllCollectionNamesFromDB,
   getCollectionByName,
 } from "./collectionUtils";
+import { getBattlePassFromDB } from "./battlePassUtils";
 
 const PLAYER_LEVEL_XP = 4000;
 

@@ -2,7 +2,6 @@ import { createTRPCRouter } from "~/server/api/trpc";
 import { playerRouter } from "~/server/api/routers/playerRouter";
 import { battlePassRouter } from "./routers/battlePassRouter";
 import { questRouter } from "./routers/questRouter";
-import { itemRouter } from "./routers/itemRouter";
 import { collectionRouter } from "./routers/collectionRouter";
 
 /**
@@ -14,7 +13,6 @@ export const appRouter = createTRPCRouter({
   player: playerRouter,
   battlePass: battlePassRouter,
   quest: questRouter,
-  item: itemRouter,
   collection: collectionRouter,
 });
 

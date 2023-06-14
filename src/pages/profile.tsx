@@ -9,9 +9,10 @@ import PlayerForm from "~/components/profile/PlayerForm";
 import AdminForm from "~/components/profile/AdminForm";
 
 const Profile = ({ player }: { player: Player }) => {
-  const isUserAdmin = player.userType === "admin";
   const collectionNamesFromDB =
-    api.item.getCollectionNamesFromAllItems.useQuery().data || [];
+    api.collection.getAllCollectionNames.useQuery().data || [];
+
+  const isUserAdmin = player.userType === "admin";
 
   return (
     <>

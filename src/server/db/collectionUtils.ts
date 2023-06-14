@@ -1,20 +1,29 @@
 import { z } from "zod";
-import { ItemSchema } from "./itemUtils";
 import {
   arrayUnion,
   collection,
   doc,
-  getDoc,
   getDocs,
   limit,
   query,
   setDoc,
   updateDoc,
   where,
+  CollectionReference,
+  QueryDocumentSnapshot,
+  QuerySnapshot,
 } from "firebase/firestore";
 import { db } from "./firebase";
 import { Item } from "../utils/Item";
 import { Collection } from "../utils/Collection";
+
+export const ItemSchema = z.object({
+  name: z.string(),
+  type: z.string(),
+  amount: z.number().optional(),
+  multiplier: z.number().optional(),
+  src: z.string().optional(),
+});
 
 export const CollectionSchema = z.object({
   name: z.string(),
@@ -78,7 +87,7 @@ export const addItemToCollection = async (
     if (!querySnapshot.empty && docSnapshot) {
       const docRef = doc(db, "collections", docSnapshot.id);
       await updateDoc(docRef, {
-        item: arrayUnion(item),
+        items: arrayUnion(item),
       });
     } else {
       console.error("No collection with given name!");
@@ -86,4 +95,17 @@ export const addItemToCollection = async (
   } catch (err) {
     console.error(err);
   }
+};
+
+export const getAllItemsFromCollection = async (
+  collectionName: string
+): Promise<Item[]> => {
+  const collectionsRef: CollectionReference = collection(db, "collections");
+  const itemsQuery = query(collectionsRef, where("name", "==", collectionName));
+
+  const querySnapshot: QuerySnapshot = await getDocs(itemsQuery);
+
+  return querySnapshot.docs.flatMap(
+    (doc: QueryDocumentSnapshot) => doc.data().items as Item[]
+  );
 };
