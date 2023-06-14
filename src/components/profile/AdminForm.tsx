@@ -67,8 +67,9 @@ function AdminForm({ collectionNames }: { collectionNames: string[] }) {
                   >
                     <FontAwesomeIcon icon={faEllipsis} className="px-2 py-1" />
                   </button>
+                  {/* TODO: animate the gridVisibility & change the icons based if the grid is visible or not */}
                   <section
-                    className={`grid h-24 grid-cols-4 gap-4 transition-all duration-200 ease-in-out ${
+                    className={`grid h-24 grid-cols-4 gap-4  ${
                       gridVisibility[idx] ? "h-full" : "h-24 overflow-hidden"
                     }`}
                   >
