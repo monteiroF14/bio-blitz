@@ -2,6 +2,7 @@ import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import Head from "next/head";
+import { RecoilRoot } from "recoil";
 
 import { api } from "~/utils/api";
 
@@ -14,11 +15,13 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <Head>
-        <title>bioBlitz</title>
-      </Head>
-      <Header />
-      <Component {...pageProps} />
+      <RecoilRoot>
+        <Head>
+          <title>bioBlitz</title>
+        </Head>
+        <Header />
+        <Component {...pageProps} />
+      </RecoilRoot>
     </SessionProvider>
   );
 };

@@ -1,10 +1,12 @@
 import {
   CollectionSchema,
   addCollectionToDB,
+  addItemToCollection,
   getCollectionByName,
 } from "~/server/db/collectionUtils";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 import { z } from "zod";
+import { ItemSchema } from "~/server/db/itemUtils";
 
 export const collectionRouter = createTRPCRouter({
   addCollectionToDB: publicProcedure
@@ -23,4 +25,18 @@ export const collectionRouter = createTRPCRouter({
       console.error(err);
     }
   }),
+  addItemToCollection: publicProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        item: ItemSchema,
+      })
+    )
+    .mutation(async ({ input: { name, item } }) => {
+      try {
+        await addItemToCollection(name, item);
+      } catch (err) {
+        console.error(err);
+      }
+    }),
 });

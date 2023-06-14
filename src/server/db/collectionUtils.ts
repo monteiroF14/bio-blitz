@@ -1,11 +1,15 @@
 import { z } from "zod";
 import { ItemSchema } from "./itemUtils";
 import {
+  arrayUnion,
   collection,
   doc,
+  getDoc,
   getDocs,
+  limit,
   query,
   setDoc,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { db } from "./firebase";
@@ -56,5 +60,30 @@ export const getAllCollectionNamesFromDB = async () => {
   } catch (error) {
     console.error("Error retrieving collection names from items: ", error);
     return [];
+  }
+};
+
+export const addItemToCollection = async (
+  collectionName: string,
+  item: Item
+) => {
+  try {
+    const collectionRef = collection(db, "collections");
+    const querySnapshot = await getDocs(
+      query(collectionRef, where("name", "==", collectionName), limit(1))
+    );
+
+    const docSnapshot = querySnapshot.docs[0];
+
+    if (!querySnapshot.empty && docSnapshot) {
+      const docRef = doc(db, "collections", docSnapshot.id);
+      await updateDoc(docRef, {
+        item: arrayUnion(item),
+      });
+    } else {
+      console.error("No collection with given name!");
+    }
+  } catch (err) {
+    console.error(err);
   }
 };

@@ -6,6 +6,8 @@ import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import Modal from "react-modal";
 import { Collection } from "~/server/utils/Collection";
 import { Item } from "~/server/utils/Item";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { newItemsState } from "./state/newItemsState";
 
 interface INewCollection {
   newCollectionName: string | undefined;
@@ -22,7 +24,12 @@ function NewCollectionModal({
   const modalRef = useRef<Modal>(null);
   const [itemsComponent, setItemsComponent] = useState<React.ReactNode[]>([]);
 
+  const newItemsList = useRecoilValue(newItemsState);
+  const setNewItemsState = useSetRecoilState(newItemsState);
+
   const newCollectionMutation = api.collection.addCollectionToDB.useMutation();
+  const updateCollectionMutation =
+    api.collection.addItemToCollection.useMutation();
 
   const onModalToggle = () => setToggleModal(!toggleModal);
 
@@ -32,9 +39,20 @@ function NewCollectionModal({
   };
 
   const handleAddAnotherItem = () => {
+    const itemId = Date.now();
+
+    setNewItemsState((itemsFromState) => [
+      ...itemsFromState,
+      {
+        id: itemId,
+        name: "",
+        type: "",
+      },
+    ]);
+
     setItemsComponent((prevItems) => [
       ...prevItems,
-      <ItemCard key={prevItems.length} type="add" />,
+      <ItemCard key={prevItems.length} type="add" itemId={itemId} />,
     ]);
   };
 
@@ -42,17 +60,46 @@ function NewCollectionModal({
     evt.preventDefault();
 
     const formData = new FormData(evt.target as HTMLFormElement);
-    const newCollectionFormData = Object.fromEntries(formData.entries());
-
-    console.log(itemsComponent);
+    const newCollectionFormData: INewCollection = {
+      newCollectionName:
+        formData.get("newCollectionName")?.toString() || undefined,
+      itemsSelect: formData.get("itemsSelect")?.toString() || undefined,
+      items: newItemsList || [],
+    };
 
     newCollectionFormData.newCollectionName
       ? delete newCollectionFormData.itemsSelect
       : delete newCollectionFormData.newCollectionName;
 
-    console.log("newCollectionFormData: ", newCollectionFormData);
+    const shouldCreateNewCollection =
+      newCollectionFormData.hasOwnProperty("newCollectionName") &&
+      newCollectionFormData.newCollectionName;
 
-    //TODO: pegar o state do ItemCard e transformar na INewCollection
+    shouldCreateNewCollection
+      ? createCollection(
+          newCollectionFormData.newCollectionName ?? "",
+          newCollectionFormData.items
+        )
+      : updateCollection(
+          newCollectionFormData.itemsSelect ?? "",
+          newCollectionFormData.items
+        );
+  };
+
+  const createCollection = (collectionName: string, items: Item[]) => {
+    newCollectionMutation.mutate({
+      items,
+      name: collectionName,
+    });
+  };
+
+  const updateCollection = (collectionName: string, items: Item[]) => {
+    items.forEach((item) => {
+      updateCollectionMutation.mutate({
+        item,
+        name: collectionName,
+      });
+    });
   };
 
   return (
@@ -138,6 +185,7 @@ function AdminForm({ collectionNames }: { collectionNames: string[] }) {
   const utils = api.useContext();
 
   useEffect(() => {
+    //TODO: fix so I get all collection names from the existing collections, not from items
     const fetchCollections = async () => {
       const newCollections: Collection[] = [];
 

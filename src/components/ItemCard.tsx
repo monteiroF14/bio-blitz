@@ -1,5 +1,6 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Item } from "~/server/utils/Item";
+import { newItemsState } from "./profile/state/newItemsState";
+import { useSetRecoilState, useRecoilValue } from "recoil";
 
 const itemTypes = [
   "backgroundImage",
@@ -8,29 +9,28 @@ const itemTypes = [
   "money",
 ] as const;
 
-const AddItemCard = ({
-  itemName,
-  setItemName,
-  itemSrc,
-  setItemSrc,
-  itemAmount,
-  setItemAmount,
-  itemMultiplier,
-  setItemMultiplier,
-  itemType,
-  setItemType,
-}: {
-  itemName: string;
-  setItemName: Dispatch<SetStateAction<string>>;
-  itemSrc: string;
-  setItemSrc: Dispatch<SetStateAction<string>>;
-  itemAmount: number;
-  setItemAmount: Dispatch<SetStateAction<number>>;
-  itemMultiplier: number;
-  setItemMultiplier: Dispatch<SetStateAction<number>>;
-  itemType: string;
-  setItemType: Dispatch<SetStateAction<string>>;
-}) => {
+const AddItemCard = ({ itemId }: { itemId: number }) => {
+  const newItemsList = useRecoilValue(newItemsState);
+  const setNewItemsState = useSetRecoilState(newItemsState);
+
+  const currentItem = newItemsList.find((item) => item.id === itemId);
+
+  const updateNewItemsState = (property: string, value: string | number) => {
+    if (currentItem) {
+      setNewItemsState((itemsFromState) =>
+        itemsFromState.map((item) => {
+          if (item.id === itemId) {
+            return {
+              ...item,
+              [property]: value,
+            };
+          }
+          return item;
+        })
+      );
+    }
+  };
+
   return (
     <div className="flex w-full flex-1 flex-col gap-2 p-2" id="addItemForm">
       <input
@@ -38,8 +38,8 @@ const AddItemCard = ({
         name="itemName"
         id="itemName"
         placeholder="Item name.."
-        value={itemName}
-        onChange={(e) => setItemName(e.target.value)}
+        value={currentItem?.name}
+        onChange={(e) => updateNewItemsState("name", e.target.value)}
         required
       />
       <input
@@ -47,16 +47,16 @@ const AddItemCard = ({
         name="itemSrc"
         id="itemSrc"
         placeholder="Item src.."
-        value={itemSrc}
-        onChange={(e) => setItemSrc(e.target.value)}
+        value={currentItem?.src}
+        onChange={(e) => updateNewItemsState("src", e.target.value)}
       />
       <input
         type="number"
         name="itemAmount"
         id="itemAmount"
         placeholder="Item amount.."
-        value={itemAmount}
-        onChange={(e) => setItemAmount(Number.parseInt(e.target.value))}
+        value={currentItem?.amount}
+        onChange={(e) => updateNewItemsState("amount", e.target.value)}
       />
       <input
         type="number"
@@ -64,14 +64,14 @@ const AddItemCard = ({
         name="itemMultiplier"
         id="itemMultiplier"
         placeholder="Item multiplier.."
-        value={itemMultiplier}
-        onChange={(e) => setItemMultiplier(Number.parseInt(e.target.value))}
+        value={currentItem?.multiplier}
+        onChange={(e) => updateNewItemsState("multiplier", e.target.value)}
       />
       <select
         name="itemTypes"
         id="itemTypes"
-        value={itemType}
-        onChange={(e) => setItemType(e.target.value)}
+        value={currentItem?.type}
+        onChange={(e) => updateNewItemsState("type", e.target.value)}
         required
       >
         {itemTypes.map((type) => (
@@ -86,42 +86,23 @@ const AddItemCard = ({
 
 const ItemCard = ({
   item,
+  itemId,
   type,
   onClick,
 }: {
   item?: Item;
+  itemId?: number;
   type: "create" | "add" | "show";
   onClick?: () => void;
 }) => {
-  const [itemName, setItemName] = useState("");
-  const [itemSrc, setItemSrc] = useState("");
-  const [itemAmount, setItemAmount] = useState(0);
-  const [itemMultiplier, setItemMultiplier] = useState(0);
-  const [itemType, setItemType] = useState("");
-
-  useEffect(() => {
-    setItemName("pedro");
-  }, []);
-
   return (
     <article className="grid h-fit min-h-24 place-items-center overflow-hidden border-2 border-black font-medium">
       {type === "create" ? (
         <button className="h-full w-full" onClick={onClick}>
           +
         </button>
-      ) : type === "add" ? (
-        <AddItemCard
-          itemName={itemName}
-          setItemName={setItemName}
-          itemSrc={itemSrc}
-          setItemSrc={setItemSrc}
-          itemAmount={itemAmount}
-          setItemAmount={setItemAmount}
-          itemMultiplier={itemMultiplier}
-          setItemMultiplier={setItemMultiplier}
-          itemType={itemType}
-          setItemType={setItemType}
-        />
+      ) : type === "add" && itemId ? (
+        <AddItemCard itemId={itemId} />
       ) : (
         item?.name
       )}
