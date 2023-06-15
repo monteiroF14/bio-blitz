@@ -13,3 +13,8 @@
 body {
   @apply bg-slate-800;
 }
+
+img {
+  max-width: 100%;
+  display: block;
+}

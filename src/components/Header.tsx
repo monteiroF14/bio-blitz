@@ -1,10 +1,13 @@
 import React, { useEffect } from "react";
 import Link from "next/link";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import Player from "~/server/utils/player/PlayerClass";
 import crypto from "crypto";
-import Wallet from "./Wallet";
+import Image from "next/image";
+
+const greyImageBG =
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAA1BMVEWIiIhYZW6zAAAASElEQVR4nO3BgQAAAADDoPlTX+AIVQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwDcaiAAFXD1ujAAAAAElFTkSuQmCC";
 
 export const hashEmail = (email: string) => {
   const hash = crypto.createHash("sha256");
@@ -12,24 +15,20 @@ export const hashEmail = (email: string) => {
   return hash.digest("hex");
 };
 
-const LinkHeader = ({ text, url }: { text: string; url?: string }) => {
-  const href = url ? `/${url}` : "/";
-
-  return (
-    <Link
-      href={href}
-      className="block rounded py-2 pl-3 pr-4 text-gray-900 hover:bg-gray-100 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-blue-500"
-    >
-      {text}
-    </Link>
-  );
-};
-
 const Header = () => {
   const { data: sessionData } = useSession();
   const email = sessionData?.user?.email
     ? hashEmail(sessionData.user.email)
     : "";
+
+  const { data: storageAssets } = api.storage.getAssetsFromStorage.useQuery();
+
+  const bioBlitzLogo = storageAssets?.find(
+    (asset) => asset.name.replace(".png", "") === "logo"
+  );
+  const bioBlitzSymbol = storageAssets?.find(
+    (asset) => asset.name === "symbol"
+  );
 
   const getPlayerQuery = api.player.getPlayerFromDB.useQuery(email, {
     enabled: !!email,
@@ -52,23 +51,35 @@ const Header = () => {
   }, [sessionData, getPlayerQuery.isLoading]);
 
   return (
-    <header className="flex items-center gap-8 px-12 py-6 dark:bg-gray-900">
-      <Link href="/" aria-labelledby="Logo">
-        <span className="self-center whitespace-nowrap text-2xl font-semibold dark:text-white">
-          bioBlitz
-        </span>
+    <header className="flex items-center justify-start gap-4 bg-transparent px-12 py-6">
+      <Link href="/" aria-labelledby="Logo" className="relative h-32 w-full">
+        {bioBlitzLogo && (
+          <Image
+            src={bioBlitzLogo.src}
+            alt={"bioBlitz - logo"}
+            fill
+            style={{ objectFit: "contain" }}
+            sizes="(max-width: 100%)"
+          />
+        )}
       </Link>
-      <nav className="ml-auto flex gap-8">
-        <LinkHeader text="Battle Pass" url="battle-pass" />
-        <LinkHeader text="Contact Us" url="contact-us" />
-        <LinkHeader text="Profile" url="profile" />
-      </nav>
-      <button
-        className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-        onClick={sessionData ? () => void signOut() : () => void signIn()}
+      <Link
+        href="/profile"
+        className="relative aspect-square h-14 overflow-hidden rounded-full "
       >
-        {sessionData ? "Sign out" : "Sign in"}
-      </button>
+        {sessionData ? (
+          getPlayerQuery.data && (
+            <Image
+              src={getPlayerQuery.data.image}
+              alt={getPlayerQuery.data.name}
+              fill
+              sizes="(max-width: 100%)"
+            />
+          )
+        ) : (
+          <Image src={greyImageBG} alt="User profile picture" fill />
+        )}
+      </Link>
     </header>
   );
 };
