@@ -1,6 +1,7 @@
 import { Item } from "~/server/utils/Item";
 import { newItemsState } from "./profile/state/newItemsState";
 import { useSetRecoilState, useRecoilValue } from "recoil";
+import Button from "./ui/Button";
 
 const itemTypes = [
   "backgroundImage",
@@ -43,7 +44,7 @@ const AddItemCard = ({ itemId }: { itemId: number }) => {
         required
       />
       <input
-        type="text"
+        type="file"
         name="itemSrc"
         id="itemSrc"
         placeholder="Item src.."
@@ -98,9 +99,9 @@ const ItemCard = ({
   return (
     <article className="grid h-fit min-h-24 place-items-center overflow-hidden border-2 border-black font-medium">
       {type === "create" ? (
-        <button className="h-full w-full" onClick={onClick}>
+        <Button variant="default" className="h-full w-full" onClick={onClick}>
           +
-        </button>
+        </Button>
       ) : type === "add" && itemId ? (
         <AddItemCard itemId={itemId} />
       ) : (

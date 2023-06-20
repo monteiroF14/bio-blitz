@@ -1,15 +1,8 @@
 import React, { useState } from "react";
+import Button from "./ui/Button";
+import { Quest } from "~/server/utils/quest/generateQuests";
 
-interface QuestComponentProps {
-  questId: string;
-  description: string;
-  XP: number;
-}
-
-export const QuestComponent = ({
-  questId,
-  description,
-}: QuestComponentProps) => {
+export const QuestComponent = ({ quest }: { quest: Quest }) => {
   const [isQuestDone, setIsQuestDone] = useState(false);
   const [questCompletionProof, setQuestCompletionProof] = useState<string>("");
 
@@ -18,19 +11,23 @@ export const QuestComponent = ({
     setQuestCompletionProof("https://example.com/questCompletionProof");
   };
 
+  const { description, frequency, currentFrequency } = quest;
+
   return (
-    <article className="grid grid-cols-[1fr_25%] items-center gap-4">
+    <article className="flex items-center justify-between gap-4">
       {isQuestDone ? (
         <p>Quest completed. Proof: {questCompletionProof}</p>
       ) : (
         <>
-          <label htmlFor={questId}>{description}</label>
-          <button
-            className="rounded border-2 border-zinc-900 bg-transparent px-4 py-2 font-bold text-zinc-900 dark:border-white dark:text-white"
-            onClick={handleQuestSubmission}
-          >
-            submit
-          </button>
+          <p className="flex w-full justify-between text-ellipsis text-zinc-50">
+            {description}
+            <span className="text-zinc-400">
+              ({currentFrequency}/{frequency})
+            </span>
+          </p>
+          <Button variant="default" onClick={handleQuestSubmission}>
+            Submit
+          </Button>
         </>
       )}
     </article>

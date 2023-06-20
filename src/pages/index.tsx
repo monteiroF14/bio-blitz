@@ -1,11 +1,17 @@
-import { type NextPage } from "next";
-import QuestModal from "~/components/QuestModal";
+import BattlePassWidget from "~/components/BattlePassWidget";
+import Header from "~/components/ui/Header";
+import Quests from "~/components/Quests";
+import { NextPage } from "next";
 
 const Home: NextPage = () => {
   return (
-    <main>
-      <QuestModal />
-    </main>
+    <>
+      <Header shouldGoBack={false} />
+      <main>
+        <Quests />
+        <BattlePassWidget />
+      </main>
+    </>
   );
 };
 

@@ -5,6 +5,7 @@ import Modal from "react-modal";
 import { Item } from "~/server/utils/Item";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { newItemsState } from "./state/newItemsState";
+import Button from "../ui/Button";
 
 interface IModalCollection {
   newCollectionName: string | undefined;
@@ -103,12 +104,9 @@ function NewCollectionModal({
 
   return (
     <>
-      <button
-        className="dark:focus:ring-bio-bg-bio-red-500 w-1/4 rounded-lg bg-bio-red-500 p-2.5 px-12 text-center text-sm font-medium text-white hover:bg-bio-red-500 focus:outline-none focus:ring-4 focus:ring-bio-red-200 dark:bg-bio-red-400 dark:hover:bg-bio-red-500"
-        onClick={onModalToggle}
-      >
+      <Button variant="default" onClick={onModalToggle}>
         New item or collection
-      </button>
+      </Button>
       <Modal
         isOpen={toggleModal}
         onRequestClose={onModalToggle}
@@ -158,18 +156,20 @@ function NewCollectionModal({
             </section>
           </section>
           <footer className="flex justify-around">
-            <button
+            <Button
+              variant="default"
               type="submit"
               className="rounded bg-gray-300 px-4 py-2 font-bold text-gray-800 hover:bg-gray-400"
             >
               Submit
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="default"
               onClick={handleCloseModal}
               className="rounded bg-gray-300 px-4 py-2 font-bold text-gray-800 hover:bg-gray-400"
             >
               Close modal
-            </button>
+            </Button>
           </footer>
         </form>
       </Modal>

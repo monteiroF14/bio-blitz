@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { Collection } from "~/server/utils/Collection";
 import NewCollectionModal from "./NewCollectionModal";
+import Button from "../ui/Button";
 
 function AdminForm({ collectionNames }: { collectionNames: string[] }) {
   const [collections, setCollections] = useState<Collection[]>([]);
@@ -60,13 +61,14 @@ function AdminForm({ collectionNames }: { collectionNames: string[] }) {
                   <h3 className="text-lg font-bold text-white">
                     {collection.name}
                   </h3>
-                  <button
+                  <Button
+                    variant="default"
                     className="absolute right-0 top-0 text-2xl font-bold text-white"
                     aria-label="Show more items"
                     onClick={() => handleShowMoreButton(idx)}
                   >
                     <FontAwesomeIcon icon={faEllipsis} className="px-2 py-1" />
-                  </button>
+                  </Button>
                   {/* TODO: animate the gridVisibility & change the icons based if the grid is visible or not */}
                   <section
                     className={`grid h-24 grid-cols-4 gap-4  ${
