@@ -1,5 +1,6 @@
 import React from "react";
 import Player from "~/server/utils/player/PlayerClass";
+import Select from "../ui/Select";
 
 const SelectPlayerTitleForm = ({
   playerData,
@@ -9,25 +10,25 @@ const SelectPlayerTitleForm = ({
   const { activeTitle, titles } = playerData;
 
   return (
-    <section>
+    <section className="w-full">
       <label
         htmlFor="playerTitleCombo"
         className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
       >
         Current title:
       </label>
-      <select
+      <Select
+        variant="default"
         name="playerTitleCombo"
         id="playerTitleCombo"
         defaultValue={activeTitle}
-        className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
       >
         <option value={activeTitle}>{activeTitle}</option>
         {titles.map(
           (title) =>
             title !== activeTitle && <option key={title}>{title}</option>
         )}
-      </select>
+      </Select>
     </section>
   );
 };

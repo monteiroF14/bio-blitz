@@ -5,6 +5,7 @@ import { api } from "~/utils/api";
 import Player from "~/server/utils/player/PlayerClass";
 import crypto from "crypto";
 import Image from "next/image";
+import Router from "next/router";
 
 const greyImageBG =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAA1BMVEWIiIhYZW6zAAAASElEQVR4nO3BgQAAAADDoPlTX+AIVQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwDcaiAAFXD1ujAAAAAElFTkSuQmCC";
@@ -15,7 +16,7 @@ export const hashEmail = (email: string) => {
   return hash.digest("hex");
 };
 
-const Header = () => {
+const Header = ({ shouldGoBack }: { shouldGoBack: boolean }) => {
   const { data: sessionData } = useSession();
   const email = sessionData?.user?.email
     ? hashEmail(sessionData.user.email)
@@ -51,7 +52,21 @@ const Header = () => {
   }, [sessionData, getPlayerQuery.isLoading]);
 
   return (
-    <header className="flex items-center justify-start gap-4 bg-transparent px-12 py-6">
+    <header className="my-4 grid grid-cols-3 place-items-center bg-transparent">
+      {shouldGoBack ? (
+        bioBlitzLogo && (
+          <Image
+            src={bioBlitzLogo.src}
+            alt={"bioBlitz - logo"}
+            width={50}
+            height={50}
+            onClick={() => Router.back()}
+            className="cursor-pointer"
+          />
+        )
+      ) : (
+        <div></div>
+      )}
       <Link href="/" aria-labelledby="Logo" className="relative h-32 w-full">
         {bioBlitzLogo && (
           <Image

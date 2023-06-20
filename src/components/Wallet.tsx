@@ -2,7 +2,8 @@ import React from "react";
 import Player from "~/server/utils/player/PlayerClass";
 import QRCode from "qrcode";
 import { api } from "~/utils/api";
-import { hashEmail } from "./Header";
+import { hashEmail } from "./ui/Header";
+import Button from "./ui/Button";
 
 const Wallet = ({ player }: { player: Player }) => {
   const withdrawFromWallet = api.player.updatePlayerWallet.useMutation();
@@ -35,9 +36,9 @@ const Wallet = ({ player }: { player: Player }) => {
         {player.wallet}€
       </p>
       {/* eslint-disable-next-line */}
-      <button onClick={async () => await updateWallet(1)}>
+      <Button variant="default" onClick={async () => await updateWallet(1)}>
         Generate QR Code
-      </button>
+      </Button>
     </>
   );
 };
