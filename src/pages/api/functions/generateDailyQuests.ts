@@ -9,6 +9,7 @@ import {
 import { Quest, generateQuests } from "~/server/utils/quest/generateQuests";
 
 const DAILY_QUESTS_COUNT = 4;
+const QUEST_TYPE: QuestWithPlayer["type"] = "daily";
 
 export interface QuestWithPlayer extends Quest {
   playerId: string;
@@ -19,9 +20,9 @@ async function generateDailyQuests(
   response: NextApiResponse
 ) {
   try {
-    await getAllQuestsByType("daily").then((allDailyQuests) => {
-      const deleteQuestsPromises = allDailyQuests.map((quest) =>
-        deleteQuestFromDB(quest.questId)
+    await getAllQuestsByType(QUEST_TYPE).then((allDailyQuests) => {
+      const deleteQuestsPromises = allDailyQuests.map(({ questId }) =>
+        deleteQuestFromDB(questId)
       );
 
       return Promise.all(deleteQuestsPromises);
@@ -30,7 +31,7 @@ async function generateDailyQuests(
     const allPlayers = await getAllPlayersFromDB();
 
     const generatedQuests: QuestWithPlayer[] = allPlayers.flatMap((player) =>
-      generateQuests(DAILY_QUESTS_COUNT, "daily").map((quest) => ({
+      generateQuests(DAILY_QUESTS_COUNT, QUEST_TYPE).map((quest) => ({
         playerId: hashEmail(player.email),
         ...quest,
       }))

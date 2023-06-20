@@ -10,13 +10,14 @@ import { getAllPlayersFromDB } from "~/server/db/playerUtils";
 import { hashEmail } from "~/components/Header";
 
 const MONTHLY_QUESTS_COUNT = 3;
+const QUEST_TYPE: QuestWithPlayer["type"] = "monthly";
 
 async function generateMonthlyQuests(
   request: NextApiRequest,
   response: NextApiResponse
 ) {
   try {
-    await getAllQuestsByType("monthly").then((allMonthlyQuests) => {
+    await getAllQuestsByType(QUEST_TYPE).then((allMonthlyQuests) => {
       const deleteQuestsPromises = allMonthlyQuests.map((quest) =>
         deleteQuestFromDB(quest.questId)
       );
@@ -27,7 +28,7 @@ async function generateMonthlyQuests(
     const allPlayers = await getAllPlayersFromDB();
 
     const generatedQuests: QuestWithPlayer[] = allPlayers.flatMap((player) =>
-      generateQuests(MONTHLY_QUESTS_COUNT, "monthly").map((quest) => ({
+      generateQuests(MONTHLY_QUESTS_COUNT, QUEST_TYPE).map((quest) => ({
         playerId: hashEmail(player.email),
         ...quest,
       }))

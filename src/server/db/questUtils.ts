@@ -19,14 +19,14 @@ export const getAllQuestsByType = async (type: Quest["type"]) => {
   return questsSnapshot.docs.map((doc) => doc.data()) as Quest[];
 };
 
-export const addQuestToDB = async (questId: string, quest = {}) => {
-  const questRef = doc(db, "quest", questId);
+export const addQuestToDB = async (questId: string, quest: Quest) => {
+  const questRef = doc(db, "quests", questId);
   await setDoc(questRef, quest);
   console.log(`Added quest with id ${questId}`);
 };
 
 export const deleteQuestFromDB = async (questId: string) => {
-  const questRef = doc(db, "quest", questId);
+  const questRef = doc(db, "quests", questId);
   await deleteDoc(questRef);
   console.log(`Deleted quest with id ${questId}`);
 };
@@ -35,14 +35,18 @@ export const getAllQuestsByTypeFromPlayer = async (
   uid: string,
   type: Quest["type"]
 ) => {
-  const questsSnapshot = await getDocs(
-    query(
-      collection(db, "quests"),
-      where("playerId", "==", uid),
-      where("type", "==", type)
-    )
+  const collectionRef = collection(db, "quests");
+
+  const questQuery = query(
+    collectionRef,
+    where("playerId", "==", uid),
+    where("type", "==", type)
   );
-  return questsSnapshot.docs.map((doc) => doc.data()) as Quest[];
+
+  const questsSnapshot = await getDocs(questQuery);
+  const questsArray = questsSnapshot.docs.map((doc) => doc.data());
+
+  return questsArray as Quest[];
 };
 
 export const increaseQuestFrequency = async (questId: string) => {

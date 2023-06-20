@@ -36,7 +36,6 @@ export const questRouter = createTRPCRouter({
       })
     )
     .query(async ({ input: { uid, type } }) => {
-      const questsFromPlayer = await getAllQuestsByTypeFromPlayer(uid, type);
-      return questsFromPlayer;
+      return await getAllQuestsByTypeFromPlayer(uid, type);
     }),
 });

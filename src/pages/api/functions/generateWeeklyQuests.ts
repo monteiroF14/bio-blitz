@@ -10,13 +10,14 @@ import { QuestWithPlayer } from "./generateDailyQuests";
 import { hashEmail } from "~/components/Header";
 
 const WEEKLY_QUESTS_COUNT = 6;
+const QUEST_TYPE: QuestWithPlayer["type"] = "weekly";
 
 async function generateWeeklyQuests(
   request: NextApiRequest,
   response: NextApiResponse
 ) {
   try {
-    await getAllQuestsByType("weekly").then((allWeeklyQuests) => {
+    await getAllQuestsByType(QUEST_TYPE).then((allWeeklyQuests) => {
       const deleteQuestsPromises = allWeeklyQuests.map((quest) =>
         deleteQuestFromDB(quest.questId)
       );
@@ -27,7 +28,7 @@ async function generateWeeklyQuests(
     const allPlayers = await getAllPlayersFromDB();
 
     const generatedQuests: QuestWithPlayer[] = allPlayers.flatMap((player) =>
-      generateQuests(WEEKLY_QUESTS_COUNT, "weekly").map((quest) => ({
+      generateQuests(WEEKLY_QUESTS_COUNT, QUEST_TYPE).map((quest) => ({
         playerId: hashEmail(player.email),
         ...quest,
       }))
