@@ -7,7 +7,7 @@ import {
 } from "~/server/db/questUtils";
 import { generateQuests } from "~/server/utils/quest/generateQuests";
 import { QuestWithPlayer } from "./generateDailyQuests";
-import { hashEmail } from "~/components/Header";
+import { hashEmail } from "~/components/ui/Header";
 
 const WEEKLY_QUESTS_COUNT = 6;
 const QUEST_TYPE: QuestWithPlayer["type"] = "weekly";

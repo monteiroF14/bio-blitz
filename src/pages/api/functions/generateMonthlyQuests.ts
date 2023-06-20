@@ -7,7 +7,7 @@ import {
 import { generateQuests } from "~/server/utils/quest/generateQuests";
 import { QuestWithPlayer } from "./generateDailyQuests";
 import { getAllPlayersFromDB } from "~/server/db/playerUtils";
-import { hashEmail } from "~/components/Header";
+import { hashEmail } from "~/components/ui/Header";
 
 const MONTHLY_QUESTS_COUNT = 3;
 const QUEST_TYPE: QuestWithPlayer["type"] = "monthly";

@@ -56,7 +56,7 @@ export const generateQuests = (
     type: questType,
     XP: setXpBasedOnType(questType),
     frequency: generateQuestFrequency(3),
-    currentFrequency: 1,
+    currentFrequency: 0,
     status: "in-progress",
     expiringDate: getExpiringDate(questType),
   }));

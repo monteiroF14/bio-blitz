@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { hashEmail } from "~/components/Header";
+import { hashEmail } from "~/components/ui/Header";
 import { getAllPlayersFromDB } from "~/server/db/playerUtils";
 import {
   addQuestToDB,
