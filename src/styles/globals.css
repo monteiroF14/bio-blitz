@@ -1,17 +1,19 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 * {
-  @apply font-montserrat;
+  @apply font-press-start uppercase;
   box-sizing: border-box;
 }
 
 body {
   @apply bg-slate-800;
+  width: min(100% - 3rem, 90ch, 60%);
+  margin-inline: auto;
 }
 
 img {
