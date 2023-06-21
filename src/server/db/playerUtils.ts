@@ -9,7 +9,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db } from "./firebase";
-import Player, { Feedback } from "../utils/player/PlayerClass";
+import Player from "../utils/player/PlayerClass";
 // import { getBattlePassFromDB } from "./battlePassUtils";
 import { BattlePass } from "../utils/BattlePass";
 import { Item } from "../utils/Item";
@@ -66,20 +66,12 @@ export const updatePlayerSchool = async (uid: string, school: string) => {
   }
 };
 
-export const updatePlayerFeedback = async (uid: string, feedback: Feedback) => {
-  const playerRef = doc(db, "players", uid);
-  await updateDoc(playerRef, {
-    feedbacks: arrayUnion(feedback),
-  });
-  console.log(`Added feedback to player with id ${uid}.`);
-};
-
 export const updatePlayerTitle = async (uid: string, title: string) => {
   const playerRef = doc(db, "players", uid);
   await updateDoc(playerRef, {
     "playerData.activeTitle": title,
   });
-  console.log(`Added feedback to player with id ${uid}.`);
+  console.log(`Added title to player with id ${uid}.`);
 };
 
 const addPlayerTitle = async (uid: string, title: string) => {

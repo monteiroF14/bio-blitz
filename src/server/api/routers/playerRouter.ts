@@ -6,12 +6,11 @@ import {
   getPlayerFromDB,
   fetchSchools,
   increaseXP,
-  updatePlayerFeedback,
   updatePlayerTitle,
   updatePlayerWallet,
   updatePlayerSchool,
 } from "~/server/db/playerUtils";
-import PlayerSchema, { FeedbackSchema } from "~/server/db/PlayerSchema";
+import PlayerSchema from "~/server/db/PlayerSchema";
 
 export const playerRouter = createTRPCRouter({
   getAllPlayersFromDB: publicProcedure.query(async () => {
@@ -53,16 +52,6 @@ export const playerRouter = createTRPCRouter({
     )
     .mutation(async ({ input }) => {
       await updatePlayerTitle(input.uid, input.title);
-    }),
-  updatePlayerFeedback: publicProcedure
-    .input(
-      z.object({
-        uid: z.string(),
-        feedback: FeedbackSchema,
-      })
-    )
-    .mutation(async ({ input }) => {
-      await updatePlayerFeedback(input.uid, input.feedback);
     }),
   updatePlayerWallet: publicProcedure
     .input(

@@ -1,16 +1,9 @@
 import { Item } from "../Item";
 
-export interface Feedback {
-  description: string;
-  rating: number;
-  creationDate: Date;
-}
-
 const START_XP = 0;
 const START_LEVEL = 1;
 const START_XP_MULTIPLIER = 1;
 const START_WALLET_VALUE = 0;
-const START_FEEDBACKS_GIVEN: Player["feedbacks"] = [];
 const START_PLAYER_REWARDS: Player["rewards"] = [];
 
 export default class Player {
@@ -32,7 +25,6 @@ export default class Player {
   wallet: number;
   userType: string;
   rewards: Item[];
-  feedbacks: Feedback[];
 
   constructor(
     name: Player["name"],
@@ -57,6 +49,5 @@ export default class Player {
     this.wallet = START_WALLET_VALUE;
     this.userType = "user";
     this.rewards = START_PLAYER_REWARDS;
-    this.feedbacks = START_FEEDBACKS_GIVEN;
   }
 }
