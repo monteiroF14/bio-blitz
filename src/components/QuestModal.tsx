@@ -70,7 +70,7 @@ const QuestModal = ({ quest, player }: { quest: Quest; player: string }) => {
   return (
     <>
       {isQuestDone ? (
-        <Heading variant="heading2" className="text-zinc-100">
+        <Heading variant="h4">
           completed!
         </Heading>
       ) : (
