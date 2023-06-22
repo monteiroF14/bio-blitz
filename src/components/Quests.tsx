@@ -4,6 +4,7 @@ import { api } from "~/utils/api";
 import { useState, Fragment } from "react";
 import Button from "./ui/Button";
 import QuestComponent from "./QuestComponent";
+import Heading from "./ui/Heading";
 
 const Quests = () => {
   const [activeTab, setActiveTab] =
@@ -42,8 +43,8 @@ const Quests = () => {
   };
 
   return (
-    <>
-      <h2 className="mb-4 text-2xl">Quests</h2>
+    <section className="grid w-full gap-4">
+      <Heading variant="h2">Quests</Heading>
       <section className="grid gap-4 border-4 border-zinc-950 bg-zinc-950/50">
         <header className="grid grid-cols-3 items-center">
           {Object.keys(playerQuests).map((questType) => (
@@ -65,7 +66,7 @@ const Quests = () => {
           ))}
         </section>
       </section>
-    </>
+    </section>
   );
 };
 

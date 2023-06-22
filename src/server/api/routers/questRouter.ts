@@ -4,6 +4,7 @@ import {
   addQuestToDB,
   getAllQuestsByType,
   getAllQuestsByTypeFromPlayer,
+  increaseQuestFrequency,
 } from "~/server/db/questUtils";
 import QuestSchema from "~/server/db/QuestSchema";
 
@@ -37,5 +38,10 @@ export const questRouter = createTRPCRouter({
     )
     .query(async ({ input: { uid, type } }) => {
       return await getAllQuestsByTypeFromPlayer(uid, type);
+    }),
+  increaseQuestFrequency: publicProcedure
+    .input(z.object({ questId: z.string() }))
+    .mutation(async ({ input: { questId } }) => {
+      return await increaseQuestFrequency(questId);
     }),
 });

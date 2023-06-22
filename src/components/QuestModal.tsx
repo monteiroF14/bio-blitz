@@ -1,94 +1,144 @@
-import React from "react";
+import { useCallback, useEffect, useState } from "react";
+import Button from "./ui/Button";
 import { Quest } from "~/server/utils/quest/generateQuests";
+import {
+  faUpRightAndDownLeftFromCenter,
+  faUpload,
+  faXmark,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Heading from "./ui/Heading";
+import { api } from "~/utils/api";
+import { Modal, ModalInterface, ModalOptions } from "flowbite";
 
-const QuestModal = () => {
-  //quest?: Quest
+const QUEST_PROOF =
+  "https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fst2.depositphotos.com%2F1575949%2F5696%2Fv%2F950%2Fdepositphotos_56963813-stock-illustration-proof-red-stamp-text.jpg&f=1&nofb=1&ipt=ba4f5b12c3ffd0119914b48a3edabff2ac9f8ae33f9d267e2ef46f753c5c490e&ipo=images";
+
+const QuestModal = ({ quest, player }: { quest: Quest; player: string }) => {
+  const [modal, setModal] = useState<ModalInterface>();
+  const [isQuestDone, setIsQuestDone] = useState(false);
+
+  const toggleModal = useCallback(() => {
+    modal?.toggle();
+  }, [modal]);
+
+  useEffect(() => {
+    const $modalElement: HTMLElement = document.getElementById(
+      "questModal"
+    ) as HTMLElement;
+
+    const modalOptions: ModalOptions = {
+      placement: "center",
+      backdrop: "dynamic",
+      closable: true,
+      onHide: () => {
+        console.log("modal is hidden");
+      },
+      onShow: () => {
+        console.log("modal is shown");
+      },
+      onToggle: () => {
+        console.log("modal has been toggled");
+      },
+    };
+
+    setModal(new Modal($modalElement, modalOptions));
+  }, []);
+
+  const { questId, type, frequency, description, XP, currentFrequency } = quest;
+
+  const addQuestProof = api.storage.addQuestProofToStorage.useMutation();
+  const increaseQuestFrequency = api.quest.increaseQuestFrequency.useMutation();
+
+  const handleUploadProof = () => {
+    addQuestProof.mutate({
+      playerId: player,
+      proof: QUEST_PROOF,
+      questId: questId,
+    });
+    increaseQuestFrequency.mutate({
+      questId: questId,
+    });
+  };
+
+  useEffect(() => {
+    if (currentFrequency === frequency) {
+      setIsQuestDone(true);
+    }
+  }, [currentFrequency, frequency]);
+
   return (
     <>
-      {/* <h3>{quest.type}</h3>
-      <p>{quest.XP}</p>
-      <p>{quest.description}</p>
-      <p>
-        {quest.currentFrequency}/{quest.frequency}
-      </p>
-      <p>{quest.expiringDate.toDateString()}</p>
-      <p>{quest.status}</p> */}
-
-      <button
-        data-modal-target="defaultModal"
-        data-modal-toggle="defaultModal"
-        className="block rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        type="button"
-      >
-        Toggle modal
-      </button>
-
-      <div
-        id="defaultModal"
+      {isQuestDone ? (
+        <Heading variant="heading2" className="text-zinc-100">
+          completed!
+        </Heading>
+      ) : (
+        <Button
+          variant="icon"
+          className="border-4 border-solid border-current bg-zinc-100 p-1 px-2 text-zinc-950"
+          onClick={toggleModal}
+        >
+          <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
+        </Button>
+      )}
+      <section
+        id="questModal"
         tabIndex={-1}
         aria-hidden="true"
+        data-modal-target="questModal"
         className="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full overflow-y-auto overflow-x-hidden p-4 md:inset-0"
       >
-        <div className="relative max-h-full w-full max-w-2xl">
-          <div className="relative rounded-lg bg-white shadow dark:bg-gray-700">
-            <div className="flex items-start justify-between rounded-t border-b p-4 dark:border-gray-600">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                Terms of Service
-              </h3>
-              <button
-                type="button"
-                className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white"
-                data-modal-hide="defaultModal"
+        <section className="relative max-h-full w-full max-w-2xl space-y-8 rounded-lg bg-white p-4 text-zinc-100 shadow dark:bg-zinc-950/90">
+          <header className="flex w-full items-center justify-between">
+            <Heading variant="title" className="text-zinc-100">
+              {type} Quest
+            </Heading>
+            <Button
+              variant="icon"
+              onClick={toggleModal}
+              data-modal-hide="questModal"
+              className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-zinc-800 dark:hover:text-white"
+            >
+              <FontAwesomeIcon icon={faXmark} />
+            </Button>
+          </header>
+          <main className="space-y-6">
+            <Heading variant="heading2">{description}</Heading>
+            <p>{XP}XP</p>
+            <p>
+              Done: {currentFrequency}/{frequency}
+            </p>
+          </main>
+          <footer className="flex items-center border-gray-200">
+            {currentFrequency === frequency ? (
+              <Button
+                data-modal-hide="questModal"
+                variant="default"
+                onClick={toggleModal}
               >
-                <svg
-                  aria-hidden="true"
-                  className="h-5 w-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
+                Close
+              </Button>
+            ) : (
+              <>
+                <Button variant="default" onClick={handleUploadProof}>
+                  UPLOAD PROOF:
+                  <span className="p-2">
+                    <FontAwesomeIcon icon={faUpload} />
+                  </span>
+                </Button>
+                <Button
+                  variant="default"
+                  onClick={toggleModal}
+                  data-modal-hide="questModal"
                 >
-                  <path
-                    fillRule="evenodd"
-                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  ></path>
-                </svg>
-                <span className="sr-only">Close modal</span>
-              </button>
-            </div>
-            <div className="space-y-6 p-6">
-              <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                With less than a month to go before the European Union enacts
-                new consumer privacy laws for its citizens, companies around the
-                world are updating their terms of service agreements to comply.
-              </p>
-              <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                The European Union’s General Data Protection Regulation
-                (G.D.P.R.) goes into effect on May 25 and is meant to ensure a
-                common set of data rights in the European Union. It requires
-                organizations to notify users as soon as possible of high-risk
-                data breaches that could personally affect them.
-              </p>
-            </div>
-            <div className="flex items-center space-x-2 rounded-b border-t border-gray-200 p-6 dark:border-gray-600">
-              <button
-                data-modal-hide="defaultModal"
-                type="button"
-                className="rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              >
-                I accept
-              </button>
-              <button
-                data-modal-hide="defaultModal"
-                type="button"
-                className="rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:z-10 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-600"
-              >
-                Decline
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+                  Cancel
+                </Button>
+              </>
+            )}
+          </footer>
+        </section>
+      </section>
     </>
   );
 };
