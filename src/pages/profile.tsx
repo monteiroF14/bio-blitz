@@ -27,7 +27,7 @@ const Profile = ({ player }: { player: Player }) => {
         <title>Profile</title>
       </Head>
       <Header shouldGoBack={true} />
-      <main className="mx-20 my-10 space-y-8">
+      <main className="space-y-8">
         {isUserAdmin ? (
           <AdminForm collectionNames={collectionNamesFromDB} />
         ) : (

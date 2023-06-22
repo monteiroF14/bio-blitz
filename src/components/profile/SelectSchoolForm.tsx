@@ -2,7 +2,7 @@ import { env } from "~/env.mjs";
 import { api } from "~/utils/api";
 import Select from "../ui/Select";
 
-const SelectSchoolForm = () => {
+const SelectSchoolForm = ({ selectedSchool }: { selectedSchool: string }) => {
   const options = {
     key: env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     query: "school",
@@ -29,8 +29,9 @@ const SelectSchoolForm = () => {
         defaultValue="ESMAD"
         required
       >
+        <option value={selectedSchool}>{selectedSchool}</option>
         {schoolsFromAPI?.map(({ place_id, name }) => (
-          <option key={place_id} value={place_id}>
+          <option key={place_id} value={name}>
             {name}
           </option>
         ))}

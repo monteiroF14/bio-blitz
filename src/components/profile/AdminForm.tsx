@@ -2,7 +2,7 @@ import ItemCard from "../ItemCard";
 import { useEffect, useState } from "react";
 import { api } from "~/utils/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
+import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { Collection } from "~/server/utils/Collection";
 import NewCollectionModal from "./NewCollectionModal";
 import Button from "../ui/Button";
@@ -47,41 +47,46 @@ function AdminForm({ collectionNames }: { collectionNames: string[] }) {
 
   return (
     <>
-      <h1 className="mb-8 text-2xl font-bold text-white">Welcome, Admin</h1>
+      <h1 className="mb-8 text-lg font-bold text-white sm:text-xl md:text-2xl">
+        Welcome, Admin
+      </h1>
       <section className="flex flex-col gap-8">
         {collectionNames.length > 0 && (
           <>
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-white">All collections</h2>
+            <section className="block items-center justify-between space-y-4 sm:flex sm:space-y-0">
+              <h2 className="text-base font-bold text-white sm:text-lg md:text-xl">
+                All collections
+              </h2>
               <NewCollectionModal collectionNames={collectionNames} />
-            </div>
-            {collections.map((collection, idx) => {
-              return (
-                <article key={idx} className="relative flex flex-col gap-4">
-                  <h3 className="text-lg font-bold text-white">
+            </section>
+            {collections.map((collection, idx) => (
+              <article key={idx} className="relative flex flex-col gap-4 ">
+                <header className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-white sm:text-base ">
                     {collection.name}
                   </h3>
                   <Button
-                    variant="default"
-                    className="absolute right-0 top-0 text-2xl font-bold text-white"
+                    variant="icon"
                     aria-label="Show more items"
                     onClick={() => handleShowMoreButton(idx)}
+                    className="leading-none"
                   >
-                    <FontAwesomeIcon icon={faEllipsis} className="px-2 py-1" />
+                    <FontAwesomeIcon
+                      icon={gridVisibility[idx] ? faMinus : faPlus}
+                    />
                   </Button>
-                  {/* TODO: animate the gridVisibility & change the icons based if the grid is visible or not */}
-                  <section
-                    className={`grid h-24 grid-cols-4 gap-4  ${
-                      gridVisibility[idx] ? "h-full" : "h-24 overflow-hidden"
-                    }`}
-                  >
-                    {collection.items?.map((item, idx) => (
-                      <ItemCard key={idx} item={item} type="show" />
-                    ))}
-                  </section>
-                </article>
-              );
-            })}
+                </header>
+                <section
+                  className={`grid h-24 grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  ${
+                    gridVisibility[idx] ? "h-full" : "h-24 overflow-hidden"
+                  }`}
+                >
+                  {collection.items?.map((item, idx) => (
+                    <ItemCard key={idx} item={item} type="show" />
+                  ))}
+                </section>
+              </article>
+            ))}
           </>
         )}
       </section>
