@@ -4,6 +4,7 @@ import { api } from "~/utils/api";
 import { hashEmail } from "./ui/Header";
 import Link from "next/link";
 import Image from "next/image";
+import Heading from "./ui/Heading";
 
 const BP_LEVEL_XP = 5000;
 
@@ -29,26 +30,39 @@ const BattlePassWidget = () => {
   const tierReward = playerTier?.reward;
 
   return (
-    <main className="my-10 space-y-8">
-      <h1 className="text-2xl font-bold text-white">Battle Pass</h1>
-      <Link href="/battle-pass">
-        <section className="flex items-center justify-between">
-          <p className="text-base font-bold text-gray-300">
-            Current Tier: {battlePassData.currentLevel}
-          </p>
-          <p className="text-base font-bold text-gray-300">
-            Current XP: {battlePassData.currentXP}
-          </p>
-        </section>
-        <p>Missing XP: {missingXP}</p>
-        <section>
-          REWARD:{" "}
-          {tierReward?.src && (
-            <Image src={tierReward?.src} alt={tierReward.name} />
-          )}
-        </section>
-      </Link>
-    </main>
+    <section className="grid w-full gap-4">
+      <Heading variant="h2">Battle Pass</Heading>
+      <section className="h-fit">
+        <Link
+          href="/battle-pass"
+          className="grid gap-4 border-4 border-zinc-950 bg-white p-4"
+        >
+          <section className="block items-center justify-between space-y-2 sm:flex sm:space-y-0">
+            <Heading variant="h6" className=" w-full text-zinc-100">
+              Current Tier: {battlePassData.currentLevel}
+            </Heading>
+            <Heading variant="h6" className=" w-full text-zinc-100">
+              Current XP: {battlePassData.currentXP}
+            </Heading>
+          </section>
+          <Heading variant="h5">Missing XP: {missingXP}</Heading>
+          <section className="grid grid-cols-2">
+            <Heading variant="h3">Reward:</Heading>
+            <section className="relative">
+              {tierReward?.src && (
+                <Image
+                  src={tierReward?.src}
+                  alt={tierReward.name}
+                  width={100}
+                  height={100}
+                  className="mx-auto object-contain"
+                />
+              )}
+            </section>
+          </section>
+        </Link>
+      </section>
+    </section>
   );
 };
 
