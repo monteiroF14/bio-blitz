@@ -66,6 +66,17 @@ export const updatePlayerSchool = async (uid: string, school: string) => {
   }
 };
 
+export const updatePlayerPreferences = async (
+  uid: string,
+  preferences: Player["playerData"]["preferences"]
+) => {
+  const playerRef = doc(db, "players", uid);
+  await updateDoc(playerRef, {
+    "playerData.preferences": preferences,
+  });
+  console.log(`Updated preferences for player with id ${uid}.`);
+};
+
 export const updatePlayerTitle = async (uid: string, title: string) => {
   const playerRef = doc(db, "players", uid);
   await updateDoc(playerRef, {

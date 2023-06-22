@@ -21,6 +21,10 @@ export default class Player {
     titles: string[];
     xpMultiplier: number;
     activeTitle: string;
+    preferences: {
+      activeBackground?: Item | null;
+      activeAvatarBorder?: Item | null;
+    };
   };
   wallet: number;
   userType: string;
@@ -29,7 +33,8 @@ export default class Player {
   constructor(
     name: Player["name"],
     email: Player["email"],
-    image: Player["image"]
+    image: Player["image"],
+    preferences: Player["playerData"]["preferences"]
   ) {
     this.name = name;
     this.email = email;
@@ -45,6 +50,7 @@ export default class Player {
       titles: ["Beginner"],
       xpMultiplier: START_XP_MULTIPLIER,
       activeTitle: "Beginner",
+      preferences,
     };
     this.wallet = START_WALLET_VALUE;
     this.userType = "user";

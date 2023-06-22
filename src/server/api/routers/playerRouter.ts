@@ -9,8 +9,12 @@ import {
   updatePlayerTitle,
   updatePlayerWallet,
   updatePlayerSchool,
+  updatePlayerPreferences,
 } from "~/server/db/playerUtils";
 import PlayerSchema from "~/server/db/PlayerSchema";
+import { ItemSchema } from "~/server/db/collectionUtils";
+import QRCode from "qrcode";
+import { addWalletReceiptToStorage } from "~/server/db/storage";
 
 export const playerRouter = createTRPCRouter({
   getAllPlayersFromDB: publicProcedure.query(async () => {
@@ -29,9 +33,9 @@ export const playerRouter = createTRPCRouter({
         player: PlayerSchema,
       })
     )
-    .mutation(async ({ input }) => {
-      const player = await addPlayerToDB(input.uid, input.player);
-      return player;
+    .mutation(async ({ input: { uid, player } }) => {
+      const newlyPlayer = await addPlayerToDB(uid, player);
+      return newlyPlayer;
     }),
   updatePlayerSchool: publicProcedure
     .input(
@@ -53,6 +57,20 @@ export const playerRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       await updatePlayerTitle(input.uid, input.title);
     }),
+  updatePlayerPreferences: publicProcedure
+    .input(
+      z.object({
+        uid: z.string(),
+        preferences: z.object({
+          // type it so Item with specific type is allowed
+          activeBackground: ItemSchema.nullable().optional(),
+          activeAvatarBorder: ItemSchema.nullable().optional(),
+        }),
+      })
+    )
+    .mutation(async ({ input: { uid, preferences } }) => {
+      await updatePlayerPreferences(uid, preferences);
+    }),
   updatePlayerWallet: publicProcedure
     .input(
       z.object({
@@ -60,9 +78,13 @@ export const playerRouter = createTRPCRouter({
         amount: z.number(),
       })
     )
-    .mutation(async ({ input }) => {
-      await updatePlayerWallet(input.uid, input.amount);
-      console.log(`Updated wallet in ${input.amount}€`);
+    .mutation(async ({ input: { uid, amount } }) => {
+      await updatePlayerWallet(uid, amount);
+
+      const receiptQrCode = await QRCode.toDataURL(`${amount}€ voucher!`);
+      const receiptURL = await addWalletReceiptToStorage(uid, receiptQrCode);
+      console.log("receiptURL: ", receiptURL);
+      return receiptURL;
     }),
   increasePlayerXP: publicProcedure
     .input(

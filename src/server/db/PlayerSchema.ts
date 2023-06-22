@@ -16,6 +16,10 @@ const PlayerSchema = z.object({
     activeTitle: z.string(),
     xpMultiplier: z.number(),
     titles: z.array(z.string()),
+    preferences: z.object({
+      activeBackground: ItemSchema.nullable().optional(),
+      activeAvatarBorder: ItemSchema.nullable().optional(),
+    }),
   }),
   wallet: z.number(),
   userType: z.string(),
