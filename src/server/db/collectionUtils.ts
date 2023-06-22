@@ -18,8 +18,9 @@ import { Item } from "../utils/Item";
 import { Collection } from "../utils/Collection";
 
 export const ItemSchema = z.object({
+  itemId: z.string(),
   name: z.string(),
-  type: z.string(),
+  type: z.string(), //TODO: create type presets
   amount: z.number().optional(),
   multiplier: z.number().optional(),
   src: z.string().optional(),
@@ -108,4 +109,23 @@ export const getAllItemsFromCollection = async (
   return querySnapshot.docs.flatMap(
     (doc: QueryDocumentSnapshot) => doc.data().items as Item[]
   );
+};
+
+export const deleteItemFromCollection = async (itemId: string) => {
+  try {
+    const collectionsRef: CollectionReference = collection(db, "collections");
+    const querySnapshot = await getDocs(collectionsRef);
+
+    await Promise.all(
+      querySnapshot.docs.map(async (doc) => {
+        const items = doc.data().items as Item[];
+        const updatedItems = items.filter((item) => item.itemId !== itemId);
+        const docRef = doc.ref;
+
+        await updateDoc(docRef, { items: updatedItems });
+      })
+    );
+  } catch (err) {
+    console.error(err);
+  }
 };

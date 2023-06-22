@@ -37,12 +37,12 @@ function NewCollectionModal({
   };
 
   const handleAddAnotherItem = () => {
-    const itemId = Date.now();
+    const itemId = Date.now().toString();
 
     setNewItemsState((itemsFromState) => [
       ...itemsFromState,
       {
-        id: itemId,
+        itemId,
         name: "",
         type: "",
       },
@@ -104,7 +104,11 @@ function NewCollectionModal({
 
   return (
     <>
-      <Button variant="default" onClick={onModalToggle}>
+      <Button
+        variant="default"
+        className="w-full sm:w-auto"
+        onClick={onModalToggle}
+      >
         New item or collection
       </Button>
       <Modal

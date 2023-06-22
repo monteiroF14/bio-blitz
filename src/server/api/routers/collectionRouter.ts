@@ -2,6 +2,7 @@ import {
   CollectionSchema,
   addCollectionToDB,
   addItemToCollection,
+  deleteItemFromCollection,
   getAllCollectionNamesFromDB,
   getAllItemsFromCollection,
   getCollectionByName,
@@ -58,4 +59,13 @@ export const collectionRouter = createTRPCRouter({
       console.error(err);
     }
   }),
+  deleteItemFromCollection: publicProcedure
+    .input(
+      z.object({
+        itemId: z.string(),
+      })
+    )
+    .mutation(async ({ input: { itemId } }) => {
+      await deleteItemFromCollection(itemId);
+    }),
 });
