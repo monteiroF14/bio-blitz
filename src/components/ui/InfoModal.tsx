@@ -31,7 +31,7 @@ const SuccessModal: FC<ModalProps & { toggleModal: () => void }> = ({
     >
       <section className="space-y-4 rounded-lg bg-zinc-900 p-4 shadow-lg">
         <header className="flex w-full items-center justify-between">
-          <Heading variant="title" className="text-zinc-100">
+          <Heading variant="h2" className="text-zinc-100">
             Success!
           </Heading>
           <Button
@@ -73,7 +73,7 @@ const ErrorModal: FC<ModalProps & { toggleModal: () => void }> = ({
     >
       <section className="space-y-4 rounded-lg bg-zinc-900 p-4 shadow-lg">
         <header className="flex w-full items-center justify-between">
-          <Heading variant="title" className="text-zinc-100">
+          <Heading variant="h2" className="text-zinc-100">
             Error!
           </Heading>
           <Button

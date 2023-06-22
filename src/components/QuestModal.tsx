@@ -70,7 +70,7 @@ const QuestModal = ({ quest, player }: { quest: Quest; player: string }) => {
   return (
     <>
       {isQuestDone ? (
-        <Heading variant="heading2" className="text-zinc-100">
+        <Heading variant="h4" className="text-zinc-100">
           completed!
         </Heading>
       ) : (
@@ -91,7 +91,7 @@ const QuestModal = ({ quest, player }: { quest: Quest; player: string }) => {
       >
         <section className="relative max-h-full w-full max-w-2xl space-y-8 rounded-lg bg-white p-4 text-zinc-100 shadow dark:bg-zinc-950/90">
           <header className="flex w-full items-center justify-between">
-            <Heading variant="title" className="text-zinc-100">
+            <Heading variant="h2" className="text-zinc-100">
               {type} Quest
             </Heading>
             <Button
@@ -104,7 +104,7 @@ const QuestModal = ({ quest, player }: { quest: Quest; player: string }) => {
             </Button>
           </header>
           <main className="space-y-6">
-            <Heading variant="heading2">{description}</Heading>
+            <Heading variant="h4">{description}</Heading>
             <p>{XP}XP</p>
             <p>
               Done: {currentFrequency}/{frequency}
