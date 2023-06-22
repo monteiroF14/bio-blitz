@@ -6,6 +6,7 @@ import Player from "~/server/utils/player/PlayerClass";
 import crypto from "crypto";
 import Image from "next/image";
 import Router from "next/router";
+import { Item } from "~/server/utils/Item";
 
 const greyImageBG =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAA1BMVEWIiIhYZW6zAAAASElEQVR4nO3BgQAAAADDoPlTX+AIVQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwDcaiAAFXD1ujAAAAAElFTkSuQmCC";
@@ -27,9 +28,12 @@ const Header = ({ shouldGoBack }: { shouldGoBack: boolean }) => {
   const bioBlitzLogo = storageAssets?.find(
     (asset) => asset.name.replace(".png", "") === "logo"
   );
-  const bioBlitzSymbol = storageAssets?.find(
-    (asset) => asset.name === "symbol"
+
+  const borderFromAssets = storageAssets?.find(
+    (asset) => asset.name === "default_border.png"
   );
+
+  const goBackBtn = storageAssets?.find((asset) => asset.name === "goback.png");
 
   const getPlayerQuery = api.player.getPlayerFromDB.useQuery(email, {
     enabled: !!email,
@@ -45,19 +49,63 @@ const Header = ({ shouldGoBack }: { shouldGoBack: boolean }) => {
       !getPlayerQuery.isSuccess &&
       !getPlayerQuery.isLoading
     ) {
+      const { data: storageAssets } =
+        api.storage.getAssetsFromStorage.useQuery();
+
+      const borderFromAssets = storageAssets?.find(
+        (asset) => asset.name === "default_border.png"
+      );
+
+      const bgFromAssets = storageAssets?.find(
+        (asset) => asset.name === "default_background.png"
+      );
+
+      const DEFAULT_BORDER: Item = {
+        itemId: Date.now().toString(),
+        name: borderFromAssets?.name ?? "",
+        src: borderFromAssets?.src,
+        type: "avatarBorder",
+      };
+
+      const DEFAULT_BACKGROUND: Item = {
+        itemId: Date.now().toString(),
+        name: bgFromAssets?.name ?? "",
+        src: bgFromAssets?.src,
+        type: "backgroundImage",
+      };
+
+      const preferences: Player["playerData"]["preferences"] = {
+        activeAvatarBorder: DEFAULT_BORDER,
+        activeBackground: DEFAULT_BACKGROUND,
+      };
+
       const { name, email, image } = sessionData.user;
-      const newPlayer = new Player(name, email, image);
+      const newPlayer = new Player(name, email, image, preferences);
       addPlayerMutation.mutate({ uid: hashEmail(email), player: newPlayer });
+
+      const updateBodyBackground = () => {
+        const bodyElement = document.body;
+        if (preferences.activeBackground?.src) {
+          bodyElement.style.backgroundImage = `url(${preferences.activeBackground?.src})`;
+        } else {
+          bodyElement.style.backgroundImage = "#101010";
+        }
+        bodyElement.style.backgroundRepeat = "no-repeat";
+        bodyElement.style.backgroundPosition = "center";
+        bodyElement.style.backgroundSize = "cover";
+      };
+
+      updateBodyBackground();
     }
   }, [sessionData, getPlayerQuery.isLoading]);
 
   return (
     <header className="my-4 grid grid-cols-3 place-items-center bg-transparent">
       {shouldGoBack ? (
-        bioBlitzLogo && (
+        goBackBtn && (
           <Image
-            src={bioBlitzLogo.src}
-            alt={"bioBlitz - logo"}
+            src={goBackBtn.src}
+            alt={"Go Back"}
             width={50}
             height={50}
             onClick={() => Router.back()}
@@ -73,8 +121,8 @@ const Header = ({ shouldGoBack }: { shouldGoBack: boolean }) => {
             src={bioBlitzLogo.src}
             alt={"bioBlitz - logo"}
             fill
-            style={{ objectFit: "contain" }}
-            sizes="(max-width: 100%)"
+            className="object-contain"
+            sizes="max-width: 100%"
           />
         )}
       </Link>
@@ -83,16 +131,35 @@ const Header = ({ shouldGoBack }: { shouldGoBack: boolean }) => {
         className="relative aspect-square h-14 overflow-hidden rounded-full "
       >
         {sessionData ? (
-          getPlayerQuery.data && (
-            <Image
-              src={getPlayerQuery.data.image}
-              alt={getPlayerQuery.data.name}
-              fill
-              sizes="(max-width: 100%)"
-            />
+          getPlayerQuery.data &&
+          getPlayerQuery.data.playerData.preferences.activeAvatarBorder
+            ?.src && (
+            <>
+              <Image
+                src={
+                  getPlayerQuery.data.playerData.preferences.activeAvatarBorder
+                    ?.src
+                }
+                alt="Avatar Border"
+                fill
+                sizes="max-width: 100%"
+                className="z-10"
+              />
+              <Image
+                src={getPlayerQuery.data.image}
+                alt={getPlayerQuery.data.name}
+                fill
+                sizes="max-width: 100%"
+              />
+            </>
           )
         ) : (
-          <Image src={greyImageBG} alt="User profile picture" fill />
+          <Image
+            src={greyImageBG}
+            alt="User profile picture"
+            fill
+            sizes="max-width: 100%"
+          />
         )}
       </Link>
     </header>
