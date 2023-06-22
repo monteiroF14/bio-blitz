@@ -59,7 +59,7 @@ export const increaseQuestFrequency = async (questId: string) => {
 
       if (currentFrequency < 3) {
         transaction.update(questRef, {
-          frequency: increment(1),
+          currentFrequency: increment(1),
         });
       }
     }
