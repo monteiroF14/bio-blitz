@@ -2,6 +2,10 @@ import { Item } from "~/server/utils/Item";
 import { newItemsState } from "./profile/state/newItemsState";
 import { useSetRecoilState, useRecoilValue } from "recoil";
 import Button from "./ui/Button";
+import Image from "next/image";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { api } from "~/utils/api";
 
 const itemTypes = [
   "backgroundImage",
@@ -10,17 +14,47 @@ const itemTypes = [
   "money",
 ] as const;
 
-const AddItemCard = ({ itemId }: { itemId: number }) => {
+const ShowItemCard = ({ item }: { item: Item }) => {
+  const deleteItem = api.collection.deleteItemFromCollection.useMutation();
+
+  const handleDeleteItem = (itemId: string) => {
+    // TODO: add confirm modal here
+    deleteItem.mutate({ itemId });
+  };
+
+  return (
+    <>
+      {item.src ? (
+        <Image
+          alt={item.name}
+          src={item.src}
+          fill={true}
+          sizes="max-width: 100%"
+          className="absolute"
+        />
+      ) : (
+        <p className="place-self-center">{item.name}</p>
+      )}
+      <section className="absolute right-2 top-1 flex gap-2">
+        <Button variant="icon" onClick={() => handleDeleteItem(item.itemId)}>
+          <FontAwesomeIcon icon={faTrash} />
+        </Button>
+      </section>
+    </>
+  );
+};
+
+const AddItemCard = ({ itemId }: { itemId: string }) => {
   const newItemsList = useRecoilValue(newItemsState);
   const setNewItemsState = useSetRecoilState(newItemsState);
 
-  const currentItem = newItemsList.find((item) => item.id === itemId);
+  const currentItem = newItemsList.find((item) => item.itemId === itemId);
 
   const updateNewItemsState = (property: string, value: string | number) => {
     if (currentItem) {
       setNewItemsState((itemsFromState) =>
         itemsFromState.map((item) => {
-          if (item.id === itemId) {
+          if (item.itemId === itemId) {
             return {
               ...item,
               [property]: value,
@@ -92,12 +126,12 @@ const ItemCard = ({
   onClick,
 }: {
   item?: Item;
-  itemId?: number;
+  itemId?: string;
   type: "create" | "add" | "show";
   onClick?: () => void;
 }) => {
   return (
-    <article className="grid h-fit min-h-24 place-items-center overflow-hidden border-2 border-black font-medium">
+    <article className="relative grid min-h-24 place-items-center overflow-hidden border-2 border-black font-medium">
       {type === "create" ? (
         <Button variant="default" className="h-full w-full" onClick={onClick}>
           +
@@ -106,7 +140,7 @@ const ItemCard = ({
         <AddItemCard itemId={itemId} />
       ) : (
         //TODO: make this show the item and add delete & update to it (use "p" that can be edited)
-        item?.name
+        item && <ShowItemCard item={item} />
       )}
     </article>
   );
