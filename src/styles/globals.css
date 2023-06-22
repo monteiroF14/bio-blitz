@@ -11,8 +11,9 @@
 }
 
 body {
-  @apply bg-slate-800;
-  width: min(100% - 3rem, 90ch, 60%);
+  /* @apply bg-[#2BBCEE]; */
+  @apply bg-slate-600;
+  width: min(100% - 3rem, 80%);
   margin-inline: auto;
 }
 
